@@ -2,17 +2,19 @@
 /**
  * ExampleModel Class
  *
- * @package        SuperCI
+ * @package        Ycsocket
  * @subpackage    Model
  * @category      Example Model
  * @author        caohao
  */
-class Core_Model extends SuperModel {
+class CoreModel extends SuperModel {
     var $db;
+    var $redis_key;
     const EMPTY_STRING = -999999999;
 
     public function init() {
         $this->util_log = $this->loader->logger('model_log');
+        $this->redis_key = "default";
     }
 
     /**
@@ -22,7 +24,7 @@ class Core_Model extends SuperModel {
     private function get_redis($redis_key) {
         if (empty($redis_key)) return;
 
-        $redis = $this->loader->redis("default");
+        $redis = $this->loader->redis($this->redis_key);
         if (!empty($redis)) {
             return $redis->get($redis_key);
         }
@@ -38,7 +40,7 @@ class Core_Model extends SuperModel {
     private function set_redis($redis_key, $data, $redis_expire, $set_empty_flag) {
         if (empty($redis_key)) return;
 
-        $redis = $this->loader->redis("default");
+        $redis = $this->loader->redis($this->redis_key);
         if (!empty($redis)) {
             if (empty($data) && $set_empty_flag) {
                 $redis->set($redis_key, self::EMPTY_STRING);
@@ -58,7 +60,7 @@ class Core_Model extends SuperModel {
             return;
         }
 
-        $redis = $this->loader->redis("default");
+        $redis = $this->loader->redis($this->redis_key);
         if (!empty($redis)) {
             $redis->del($redis_key);
         }

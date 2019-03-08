@@ -2,14 +2,13 @@
 /**
  * ExampleModel Class
  *
- * @package        SuperCI
- * @subpackage    Model
- * @category      Example Model
- * @author        caohao
+ * @package			Ycsocket
+ * @subpackage		Model
+ * @category		Example Model
+ * @author			caohao
  */
-class DabaojianModel extends Core_Model
-{
-    public function init(){
+class DabaojianModel extends CoreModel {
+    public function init() {
         $this->db = $this->loader->database('starfast');
         $this->util_log = $this->loader->logger('dabaojian_log');
     }

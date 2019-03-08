@@ -44,35 +44,35 @@
 | The $active_record variables lets you determine whether or not to load
 | the active record class
 */
-$db_config['default']['host']     = '127.0.0.1';
-$db_config['default']['username'] = 'root';
-$db_config['default']['password'] = '123123';
-$db_config['default']['dbname']   = 'user';
-$db_config['default']['pconnect'] = FALSE;
-$db_config['default']['db_debug'] = TRUE;
-$db_config['default']['char_set'] = 'utf8';
-$db_config['default']['dbcollat'] = 'utf8_general_ci';
-$db_config['default']['autoinit'] = FALSE;
+$util_db_config['default']['host']     = '127.0.0.1';
+$util_db_config['default']['username'] = 'root';
+$util_db_config['default']['password'] = '123123';
+$util_db_config['default']['dbname']   = 'user';
+$util_db_config['default']['pconnect'] = FALSE;
+$util_db_config['default']['db_debug'] = TRUE;
+$util_db_config['default']['char_set'] = 'utf8';
+$util_db_config['default']['dbcollat'] = 'utf8_general_ci';
+$util_db_config['default']['autoinit'] = FALSE;
 
-$db_config['payinfo']['host']     = '127.0.0.1';
-$db_config['payinfo']['username'] = 'root';
-$db_config['payinfo']['password'] = '123123';
-$db_config['payinfo']['dbname']   = 'payinfo';
-$db_config['payinfo']['pconnect'] = FALSE;
-$db_config['payinfo']['db_debug'] = TRUE;
-$db_config['payinfo']['char_set'] = 'utf8';
-$db_config['payinfo']['dbcollat'] = 'utf8_general_ci';
-$db_config['payinfo']['autoinit'] = FALSE;
+$util_db_config['payinfo']['host']     = '127.0.0.1';
+$util_db_config['payinfo']['username'] = 'root';
+$util_db_config['payinfo']['password'] = '123123';
+$util_db_config['payinfo']['dbname']   = 'payinfo';
+$util_db_config['payinfo']['pconnect'] = FALSE;
+$util_db_config['payinfo']['db_debug'] = TRUE;
+$util_db_config['payinfo']['char_set'] = 'utf8';
+$util_db_config['payinfo']['dbcollat'] = 'utf8_general_ci';
+$util_db_config['payinfo']['autoinit'] = FALSE;
 
-$db_config['starfast']['host']     = '127.0.0.1';
-$db_config['starfast']['username'] = 'root';
-$db_config['starfast']['password'] = '123123';
-$db_config['starfast']['dbname']   = 'starfast';
-$db_config['starfast']['pconnect'] = FALSE;
-$db_config['starfast']['db_debug'] = TRUE;
-$db_config['starfast']['char_set'] = 'utf8';
-$db_config['starfast']['dbcollat'] = 'utf8_general_ci';
-$db_config['starfast']['autoinit'] = FALSE;
+$util_db_config['starfast']['host']     = '127.0.0.1';
+$util_db_config['starfast']['username'] = 'root';
+$util_db_config['starfast']['password'] = '123123';
+$util_db_config['starfast']['dbname']   = 'starfast';
+$util_db_config['starfast']['pconnect'] = FALSE;
+$util_db_config['starfast']['db_debug'] = TRUE;
+$util_db_config['starfast']['char_set'] = 'utf8';
+$util_db_config['starfast']['dbcollat'] = 'utf8_general_ci';
+$util_db_config['starfast']['autoinit'] = FALSE;
 
 /* End of file database.php */
 /* Location: ./application/config/database.php */

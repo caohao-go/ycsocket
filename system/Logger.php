@@ -2,7 +2,7 @@
 /**
  * Logger Class
  *
- * @package       SuperCI
+ * @package       Ycsocket
  * @subpackage    Libraries
  * @category      Logger
  * @author        caohao
@@ -22,14 +22,14 @@ class Logger {
     /**
      * @__construct 初始化
      * @param $config 日志配置:
-    $config['log_path'];  -- 日志目录, 一般采用默认 DEFAULT_LOG_PATH
+    $config['log_path'];  -- 日志目录, 一般采用默认 LOG_PATH
     $config['file_name']; -- 日志文件名, 不写默认为 DEFAULT_LOG_FILE_NAME
      * @param
      * @return
      */
     public function __construct($config = 0) {
-        /* 日志目录, 不写默认为 DEFAULT_LOG_PATH */
-        $this->LogPath = empty($config['log_path']) ? DEFAULT_LOG_PATH : $config['log_path'];
+        /* 日志目录, 不写默认为 LOG_PATH */
+        $this->LogPath = empty($config['log_path']) ? LOG_PATH : $config['log_path'];
 
         /* 删除目录最后一个'/' */
         if (substr($this->LogPath, -1) == '/') {
@@ -49,7 +49,7 @@ class Logger {
             $this->StatisticInfo = substr($this->StatisticInfo, 0, -1);
         }
     }
-    
+
     /**
      * @abstract 写入日志
      * @param String $log 内容
@@ -98,46 +98,46 @@ class Logger {
         /* 日志格式: [日志级别] [时间] [错误代码] [文件|行数] [ip] [uri] [referer] [cookie] [统计信息] "内容" */
         if ($privity === Logger::INFO) { //INFO日志
             $log = sprintf( "[%s] [%s] - - [%s] - - - [%s] \"%s\"\n",
-                $privity,
-                $datestr,
-                $this->ip,
-                $this->StatisticInfo,
-                $error_msg);
+                            $privity,
+                            $datestr,
+                            $this->ip,
+                            $this->StatisticInfo,
+                            $error_msg);
             file_put_contents($this->LogFileName, $log, FILE_APPEND);
         } else if ($privity === Logger::NOTICE) { //提示日志
             $log = sprintf( "[%s] [%s] - - [%s] [%s] [%s] [%s] - \"%s\"\n",
-                $privity,
-                $datestr,
-                $this->ip,
-                $uri,
-                $referer,
-                $cookie,
-                $error_msg);
+                            $privity,
+                            $datestr,
+                            $this->ip,
+                            $uri,
+                            $referer,
+                            $cookie,
+                            $error_msg);
 
             file_put_contents($this->LogFileName, $log, FILE_APPEND);
         } else if ($privity === Logger::DEBUG || $privity === Logger::NOTICE) { //调试日志
             $log = sprintf( "[%s] [%s] - [%s] [%s] [%s] [%s] [%s] - \"%s\"\n",
-                $privity,
-                $datestr,
-                $this->GetCallerInfo(),
-                $this->ip,
-                $uri,
-                $referer,
-                $cookie,
-                $error_msg);
+                            $privity,
+                            $datestr,
+                            $this->GetCallerInfo(),
+                            $this->ip,
+                            $uri,
+                            $referer,
+                            $cookie,
+                            $error_msg);
 
             file_put_contents($this->LogFileName.".debug", $log, FILE_APPEND);
         } else {
             $log = sprintf( "[%s] [%s] [%d] [%s] [%s] [%s] [%s] [%s] - \"%s\"\n",
-                $privity,
-                $datestr,
-                $error_code,
-                $this->GetCallerInfo(),
-                $this->ip,
-                $uri,
-                $referer,
-                $cookie,
-                $error_msg);
+                            $privity,
+                            $datestr,
+                            $error_code,
+                            $this->GetCallerInfo(),
+                            $this->ip,
+                            $uri,
+                            $referer,
+                            $cookie,
+                            $error_msg);
 
             file_put_contents($this->LogFileName.".wf", $log, FILE_APPEND);
         }
@@ -161,13 +161,13 @@ class Logger {
         $call_info = array_reverse($call_info);
         return implode($call_info, " => ");
     }
-    
-    public function setParams($params) {
-    	$this->params = & $params;
+
+    public function setParams(& $params) {
+        $this->params = & $params;
     }
-    
+
     public function setClientIp($ip) {
-    	$this->ip = $ip;
+        $this->ip = $ip;
     }
 
     const DEBUG  = 'DEBUG';   /* 级别为 1 ,  调试日志,   当 DEBUG = 1 的时候才会打印调试 */

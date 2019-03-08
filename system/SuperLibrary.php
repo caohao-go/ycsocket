@@ -3,22 +3,20 @@
 /** 模型基类
  * SuperModel Class
  *
- * @package        SuperCI
- * @subpackage    Controller
- * @category      Controller Base
- * @author        caohao
+ * @package			Ycsocket
+ * @subpackage		Controller
+ * @category		Controller Base
+ * @author			caohao
  */
 
 class SuperLibrary {
-	protected $loader;
-	
-	public function __construct(& $loader) {
-		$this->loader = $loader;
-		$this->init();
-	}
-    
+    protected $loader;
+
+    public function __construct(& $loader) {
+        $this->loader = & $loader;
+        $this->init();
+    }
+
     protected function init() {
-	}
+    }
 }
-
-
