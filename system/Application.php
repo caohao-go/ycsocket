@@ -4,6 +4,7 @@ define('LOG_PATH', '/data/app/logs/super_server');
 define('PHP_LOG_THRESHOLD', 1); //错误记录级别 ERROR=1, DEBUG=2, WARNING=3, NOTICE=4, INFO=5, ALL=6
 
 echo "加载配置 ...\n";
+include(APP_ROOT . "/config/constants.php");
 include(APP_ROOT . "/config/database.php");
 include(APP_ROOT . "/config/redis.php");
 
