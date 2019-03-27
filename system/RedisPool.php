@@ -16,7 +16,6 @@ class RedisPool {
             global $util_redis_conf;
 
             if (!isset($util_redis_conf[$redis_name]['host'])) {
-                $this->logger->LogError("Loader::redis:  redis config not exist");
                 echo "Loader::redis:  redis config not exist";
                 exit;
             }
