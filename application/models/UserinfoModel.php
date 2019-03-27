@@ -24,7 +24,7 @@ class UserinfoModel extends SuperModel {
                 break;
             }
         }
-        
+
         if ($sequence_no) {
             $userid = sprintf("%s%03d", $cur_time, substr($sequence_no, -3));
             return intval($userid);
