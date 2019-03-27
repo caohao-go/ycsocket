@@ -31,14 +31,13 @@ class UserinfoModel extends SuperModel {
         }
     }
 
-    function register_user($appid, $userid, $open_id, $session_key) {
+    function register_user($appid, $userid, $open_id) {
         $data = array();
         $data['appid'] = $appid;
         $data['user_id'] = $userid;
         $data['open_id'] = $open_id;
-        $data['session_key'] = $session_key;
         $data['last_login_time'] = $data['regist_time'] = date('Y-m-d H:i:s', time());
-        $data['token'] = md5(TOKEN_GENERATE_KEY . time() . $userid . $session_key);
+        $data['token'] = md5(TOKEN_GENERATE_KEY . time() . $userid);
         $ret = $this->db->insert("user_info", $data);
         if ($ret != -1) {
             return $data['token'];
@@ -48,12 +47,11 @@ class UserinfoModel extends SuperModel {
         }
     }
 
-    function login_user($userid, $session_key) {
+    function login_user($userid) {
         $data = array();
         $data['user_id'] = $userid;
-        $data['session_key'] = $session_key;
         $data['last_login_time'] = date('Y-m-d H:i:s', time());
-        $data['token'] = md5(TOKEN_GENERATE_KEY . time() . $userid . $session_key);
+        $data['token'] = md5(TOKEN_GENERATE_KEY . time() . $userid);
 
         $ret = $this->db->update("user_info", ["user_id" => $userid], $data);
 
@@ -127,161 +125,5 @@ class UserinfoModel extends SuperModel {
         }
 
         return $ret;
-    }
-
-    function getUserInZoneUserids($zone_userids) {
-        $ret = array();
-
-        if (empty($zone_userids)) {
-            return $ret;
-        }
-
-        $zone_users = $this->db->get('zone_user', ['zone_user_id' => $zone_userids]);
-        if (empty($zone_users) || $zone_users == -1) {
-            return array();
-        }
-
-        $user_ids = array_column($zone_users, 'user_id');
-        $userinfos = $this->db->get('user_info', ['user_id' => $user_ids], "user_id,nickname,avatar_url,city");
-        if (empty($userinfos) || $userinfos == -1) {
-            return array();
-        }
-
-        $userinfos_array = array();
-        foreach($userinfos as $value) {
-            $userinfos_array[$value['user_id']] = $value;
-        }
-
-        $zoneinfo = Loader::config('zoneinfo')['source_zone'];
-
-        foreach($zone_users as $value) {
-            $user_id = $value['user_id'];
-            $zone_user_id = $value['zone_user_id'];
-            $zone_id = $value['zone_id'];
-
-            $userinfo = $userinfos_array[$user_id];
-            if (!empty($userinfo['nickname'])) {
-                $zone = $zoneinfo[$zone_id] == 0 ? "" : "[".$zone_id."区]";
-                $userinfo['nickname'] = $zone . $userinfo['nickname'];
-            }
-
-            unset($value['id']);
-            unset($value['updatetime']);
-            unset($value['zone_user_id']);
-            unset($value['zone_user_id']);
-            $value['user_id'] = $zone_user_id;
-            $value['nickname'] = $userinfo['nickname'];
-            $value['avatar_url'] = $userinfo['avatar_url'];
-            $value['city'] = $userinfo['city'];
-            $ret[$zone_user_id] = $value;
-        }
-
-        return $ret;
-    }
-
-    function getUserZoneUid($userid, $zone_id) {
-        $zone_id = $zone_id <= 0 ? 1 : $zone_id;
-
-        $data = $this->db->get_one('zone_user', ['user_id' => $userid, 'zone_id' => $zone_id]);
-        if ($data != -1) {
-            return intval($data['zone_user_id']);
-        }
-
-        return 0;
-    }
-
-    function insertUserZoneUid($user_id, $zone_id, $zone_user_id) {
-        $data = array();
-        $data['user_id'] = $user_id;
-        $data['zone_id'] = $zone_id;
-        $data['zone_user_id'] = $zone_user_id;
-
-        $ret = $this->db->insert('zone_user', $data);
-
-        if ($ret == -1) {
-            $this->util_log->LogError("error to insertUserZoneUid , DATA=[".json_encode($data)."]");
-            return 0;
-        }
-
-        return intval($ret);
-    }
-
-    function getUidByZoneUserId($zone_user_id) {
-        $redis = $this->loader->redis('userinfo');
-        $redis_key = "pre_zone_userid" . $zone_user_id;
-        $userid = intval($redis->get($redis_key));
-        if ($userid != 0) {
-            return $userid;
-        }
-
-        $ret = $this->db->get_one('zone_user', ['zone_user_id' => $zone_user_id]);
-        $userid = intval($ret['user_id']);
-        if ($userid == 0) { //2次获取
-            $ret = $this->db->get_one('zone_user', ['zone_user_id' => $zone_user_id]);
-            $userid = intval($ret['user_id']);
-            if ($userid == 0) {
-                return 0;
-            }
-        }
-
-        $redis->set($redis_key, $userid);
-        $redis->expire($redis_key, 86400);
-
-        return $userid;
-    }
-
-    function getUserZoneid($zone_user_id) {
-        $redis = $this->loader->redis('userinfo');
-        $redis_key = "pre_user_zone_id" . $zone_user_id;
-        $zone_id = intval($redis->get($redis_key));
-        if ($zone_id != 0) {
-            return $zone_id;
-        }
-
-        $ret = $this->db->get_one('zone_user', ['zone_user_id' => $zone_user_id]);
-        $zone_id = intval($ret['zone_id']);
-        if ($zone_id == 0) { //2次获取
-            $ret = $this->db->get_one('zone_user', ['zone_user_id' => $zone_user_id]);
-            $zone_id = intval($ret['zone_id']);
-            if ($zone_id == 0) {
-                return 0;
-            }
-        }
-
-        $zoneinfo = Loader::config('zoneinfo');
-        if ($zoneinfo['source_zone'][$zone_id] == 0) {
-            $redis->set($redis_key, 0);
-            $redis->expire($redis_key, 86400);
-            return 0;
-        }
-
-        $redis->set($redis_key, $zone_id);
-        $redis->expire($redis_key, 86400);
-        return $zone_id;
-    }
-
-    function getZoneNickname($userId, $nickname) {
-        $zone_id = $this->getUserZoneid($userId);
-        $zone = $zone_id == 0 ? "" : "[".$zone_id."区]";
-        return $zone . $nickname;
-    }
-
-    function getUidsByZoneUserids($zone_user_ids) {
-        $redis = $this->loader->redis('userinfo');
-        $redis_key = "pre_zone_userids_" . md5(serialize($zone_user_id));
-        $userids = $redis->get($redis_key);
-        if (!empty($userids)) {
-            return unserialize($userids);
-        }
-
-        $userids = $this->db->get('zone_user', ['zone_user_id' => $zone_user_ids], 'user_id');
-        if (empty($userids) || $userids == -1) {
-            return array();
-        }
-
-        $redis->set($redis_key, serialize($userids));
-        $redis->expire($redis_key, 3600);
-
-        return $userids;
     }
 }

@@ -46,15 +46,11 @@ class ShinelightController extends SuperController {
             return $this->response_error(13342339, '内容不能为空');
         }
 
-
         $result = array();
         $result['userid'] = $userId;
         $result['nickname'] = $nickname;
         $result['avatar_url'] = $avatar_url;
         $result['gender'] = $gender;
-        $result['vip_level'] = $vip_level;
-        $result['content'] =  str_replace($sensitive, "*", $content);
-
 
         return $this->response_success_to_all($result);
     }
