@@ -13,6 +13,7 @@ class Loader {
     private $ip;
     private $params;
 
+    private $entities;
     private $models;
     private $libraries;
     private $loggers;
@@ -33,12 +34,12 @@ class Loader {
         return self::$configs[$conf_name];
     }
 
-    public static function entity($entity_name, $params = null) {
-        if (empty($params)) {
-            return new $entity_name();
-        } else {
-            return new $entity_name($params);
+    public function entity($entity_name) {
+        if (!isset($this->entities[$entity_name])) {
+            $this->entities[$entity_name] = new $entity_name($this);
         }
+
+        return $this->entities[$entity_name];
     }
 
     public function & library($library_name) {
@@ -118,28 +119,24 @@ class Loader {
                 return;
             }
 
-            $redis_conf = $util_redis_conf[$redis_name];
+            $this->redises[$redis_name] = new Redis();
 
-            $this->redises[$redis_name] = new RedisPorxy($util_log, $redis_conf['host'], $redis_conf['port']);
-
-            if (substr($redis_conf['host'], 0, 1) == '/') {
-                $flag = $this->redises[$redis_name]->connect($redis_conf['host']);
+            if (substr($util_redis_conf[$redis_name]['host'], 0, 1) == '/') {
+                $flag = $this->redises[$redis_name]->connect($util_redis_conf[$redis_name]['host']);
             } else {
-                $flag = $this->redises[$redis_name]->connect($redis_conf['host'], $redis_conf['port']);
+                $flag = $this->redises[$redis_name]->connect($util_redis_conf[$redis_name]['host'], $util_redis_conf[$redis_name]['port']);
             }
 
             if (!$flag) {
                 $util_log->LogError("Loader::redis: redis connect error");
-                $this->redises[$redis_name] = null;
-                return $this->redises[$redis_name];
+                return null;
             }
 
-            if (!empty($redis_conf['auth'])) {
-                $suc = $this->redises[$redis_name]->auth($redis_conf['auth']);
+            if (!empty($util_redis_conf[$redis_name]['auth'])) {
+                $suc = $this->redises[$redis_name]->auth($util_redis_conf[$redis_name]['auth']);
                 if (!$suc) {
                     $util_log->LogError("Loader::redis:  redis auth error");
-                    $this->redises[$redis_name] = null;
-                    return $this->redises[$redis_name];
+                    return null;
                 }
             }
         }

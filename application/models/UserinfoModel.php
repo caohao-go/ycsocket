@@ -1,10 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * ExampleModel Class
+ * UserinfoModel 	Class
  *
  * @package			Ycsocket
  * @subpackage		Model
- * @category		Example Model
+ * @category		UserinfoModel
  * @author			caohao
  */
 class UserinfoModel extends SuperModel {
@@ -24,10 +24,9 @@ class UserinfoModel extends SuperModel {
                 break;
             }
         }
-
+        
         if ($sequence_no) {
-            $time_from_cur = $cur_time - 1529596800; // 2018-06-22
-            $userid = sprintf("%s%03d", substr($time_from_cur, 0, -2), substr($sequence_no, -3));
+            $userid = sprintf("%s%03d", $cur_time, substr($sequence_no, -3));
             return intval($userid);
         }
     }
@@ -111,25 +110,6 @@ class UserinfoModel extends SuperModel {
 
     public function getUserByName($nickname) {
         return $this->db->query("select * from user_info where nickname like '%$nickname%'");
-    }
-
-    function getUserAndAuth($user_id, $token,& $out) {
-        if (empty($user_id)) {
-            $out = array('errno' => 99900031, 'errmsg' => 'user id is empty');
-            return;
-        }
-
-        $userInfo = $this->getUserinfoByUserid($user_id);
-        if (empty($userInfo)) {
-            $out = array('errno' => 99900032, 'errmsg' => 'not find user');
-            return;
-        }
-
-        if (empty($token) || $token != $userInfo['token']) {
-            $out = array('errno' => 99900033, 'errmsg' => 'token is invalid');
-            return;
-        }
-        return $userInfo;
     }
 
     function getUserInUserids($userids) {

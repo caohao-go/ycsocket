@@ -31,8 +31,8 @@ class DatabaseProxy {
                 $this->$key = $val;
             }
         }
-
-        $this->db_log = $db_log;
+        
+        $this->db_log = & $db_log;
     }
 
     function initialize() {

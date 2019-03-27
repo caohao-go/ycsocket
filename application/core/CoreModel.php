@@ -464,7 +464,7 @@ class CoreModel extends SuperModel {
 
                 $userinfos = array();
                 if ($return_userinfo_flag) {
-                    $userinfo_model = Loader::model('UserinfoModel');
+                    $userinfo_model = $this->loader->model('UserinfoModel');
                     if(empty($_REQUEST['zone_id'])) {
                         $userinfos = $userinfo_model->getUserInUserids($user_keys);
                     } else {

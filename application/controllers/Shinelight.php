@@ -1,17 +1,17 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * TestController Class
+ * ShinelightController Class
  *
  * @package			Ycsocket
  * @subpackage		Controller
- * @category		TestController
+ * @category		ShinelightController
  * @author			caohao
  */
-class DabaojianController extends SuperController {
+class ShinelightController extends SuperController {
     public function init() {
         $this->userinfo_model = $this->loader->model('UserinfoModel');
-        $this->dabaojian_model = $this->loader->model('DabaojianModel');
-        $this->util_log = $this->loader->logger('dabaojian_log');
+        $this->item_model = $this->loader->model('ItemModel');
+        $this->util_log = $this->loader->logger('shinelight_log');
     }
 
     //公告
@@ -29,41 +29,23 @@ class DabaojianController extends SuperController {
 
         $result = array();
         $result['content'] =  $content;
-
+		
         return $this->response_success_to_all($result);
     }
 
     //聊天接口
     public function chatAction() {
         $userId = $this->params['userid'];
-        $token = $this->params['token'];
         $nickname = $this->params['nickname'];
         $avatar_url = $this->params['avatar_url'];
         $content = $this->params['content'];
         $gender = $this->params['gender'];
-
-        //$userInfo = $this->userinfo_model->getUserAndAuth($this->userinfo_model->getUidByZoneUserId($userId), $token, $out);
-        $userInfo = $this->userinfo_model->getUserAndAuth($userId, $token, $out);
-        if (empty($userInfo)) {
-            return $this->response_error($out['errno'], $out['errmsg']);
-        }
+		
 
         if (empty($content)) {
             return $this->response_error(13342339, '内容不能为空');
         }
 
-        /*
-        //是否黑名单
-        $exec_str = "grep $userId " . APPPATH . "/application/config/blacklist";
-        exec($exec_str, $res);
-        if(!empty($res)) {
-        	$result['black'] = 1;
-        	$result['content'] = "您已被禁言";
-        	return $this->response_success_to_me($result);
-        }
-
-        $sensitive = Loader::config("sensitive");
-        */
 
         $result = array();
         $result['userid'] = $userId;
@@ -73,13 +55,32 @@ class DabaojianController extends SuperController {
         $result['vip_level'] = $vip_level;
         $result['content'] =  str_replace($sensitive, "*", $content);
 
-        /*
-        $redis = $this->loader->redis("default");
-        $redis->rpush("dabaojian_liaotian_history", serialize($result));
-        if(intval($redis->llen("dabaojian_liaotian_history")) > 50) {
-        	$redis->lpop("dabaojian_liaotian_history");
-        }
-        */
+
         return $this->response_success_to_all($result);
+    }
+    
+    //返回用户道具接口
+    public function userItemAction() {
+        $userId = $this->params['userid'];
+        $token = $this->params['token'];
+    	
+        
+        $data = $this->item_model->get_user_items($userId);
+        return $this->response_success_to_all(['list' => $data]);
+    }
+    
+    //测试
+    public function testAction() {
+        $userId = $this->params['userid'];
+    	
+        
+        $ret = $this->item_model->insert_user_items($userId, 1, 80, 1);
+        if(!$ret) {
+        	return $this->response_error(99, 'system error');
+        }
+        
+        $data = $this->item_model->get_user_items($userId);
+        
+        return $this->response_success_to_all(['list' => $data]);
     }
 }
