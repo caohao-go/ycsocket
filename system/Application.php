@@ -16,7 +16,7 @@ set_error_handler('_exception_handler'); //设置异常处理函数
 include(BASEPATH . "/Loader.php");
 include(BASEPATH . "/Logger.php");
 include(BASEPATH . "/Entity.php");
-include(BASEPATH . "/RedisProxy.php");
+include(BASEPATH . "/RedisPool.php");
 include(BASEPATH . "/SuperController.php");
 include(BASEPATH . "/SuperModel.php");
 include(BASEPATH . '/DatabaseProxy.php');
@@ -88,43 +88,7 @@ class Application {
 
     //验签过程
     protected function _auth(& $params) {
-        if ($params['no'] == "test") { //测试
-            return 0;
-        }
 
-        if (empty($params['auth_rand'])) {
-            return $this->response_error(99990002, 'params error');
-        }
-
-        if (empty($params['timestamp'])) {
-            return $this->response_error(99990003, 'params error');
-        }
-
-        if (empty($params['signature'])) {
-            return $this->response_error(99990005, 'params error');
-        }
-
-        $auth_params = $params;
-        $c = $params['c'];
-        $m = $params['m'];
-        unset($auth_params['c']);
-        unset($auth_params['m']);
-        unset($auth_params['signature']);
-
-        $str = "/" . $c . "/" . $m . "/" . $auth_params['token'] . "/"; // 加密串str = "/游戏名/接口/token/"
-
-        unset($auth_params['token']);  // 去掉 token
-        ksort($auth_params);  //数组按 key 排序
-        reset($auth_params);  //重置数组指针指向第一个元素
-
-        foreach ($auth_params as $param_value) {  //将有序串加入到加密串 str
-            $str = $str . trim($param_value);
-        }
-        $signature = md5($str); //加密得到 signature
-        if ($signature != $params['signature']) { //加密之后与上送的signature 比较，如果不一致则验证失败
-            return $this->response_error(99990006, "params error");
-        }
-        
         return 0;
     }
 
