@@ -9,3 +9,5 @@ swoole
 我写游戏后端的时候写的
 
 客户端是一个聊天窗口
+
+支持Redis 协程线程池，源码位于 system/RedisPool，支持失败重连
