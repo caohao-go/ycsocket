@@ -35,7 +35,6 @@ class ShinelightController extends SuperController {
         $avatar_url = $this->params['avatar_url'];
         $content = $this->params['content'];
         $gender = $this->params['gender'];
-		
 
         if (empty($content)) {
             return $this->response_error(13342339, '内容不能为空');

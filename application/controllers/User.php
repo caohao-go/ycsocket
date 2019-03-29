@@ -47,7 +47,7 @@ class UserController extends SuperController {
 
     //修改用户信息
     public function modifyInfoAction() {
-        //$this->util_log->LogInfo("f10001001Action:" . createLinkstringUrlencode($this->params));
+        $this->util_log->LogInfo("f10001001Action:" . createLinkstringUrlencode($this->params));
         $userId = $this->params['userid'];
         $token = $this->params['token'];
         $rawData = $this->params['rawData'];
@@ -87,7 +87,6 @@ class UserController extends SuperController {
 	
     //获取用户信息接口
     public function getInfoAction() {
-    	//$this->util_log->LogInfo("f10001002Action:" . createLinkstringUrlencode($this->params));
         $userId = $this->params['userid'];
 
         if (empty($userId)) {
@@ -112,7 +111,6 @@ class UserController extends SuperController {
 
     //ip位置
     public function locationAction() {
-        //$this->util_log->LogInfo("f10001009Action:" . createLinkstringUrlencode($this->params));
         $appid = $this->params['appid'];
         $userid = $this->params['userid'];
         $version = $this->params['version'];
@@ -208,7 +206,6 @@ class UserController extends SuperController {
 
     //游戏配置
     public function gameConfAction() {
-        //$this->util_log->LogInfo("f10001008Action:" . createLinkstringUrlencode($this->params));
         $appid = $this->params['appid'];
         $version = $this->params['version'];
 
