@@ -56,8 +56,6 @@ class ItemModel extends CoreModel {
             return false;
         }
 
-        $ret = true;
-
         $redis_key = 'user_items_' . $user_id;
         $redis_hkey = $item_id . "_" . $open_flag;
 
