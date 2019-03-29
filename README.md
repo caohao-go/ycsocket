@@ -13,3 +13,5 @@ swoole
 支持Redis 协程线程池，源码位于 system/RedisPool，支持失败断开重连
 
 支持 MySQL 协程连接池， 源码位于 system/MySQLPool 
+
+支持共享内存 entity
