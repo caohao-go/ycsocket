@@ -23,8 +23,7 @@ include(BASEPATH . "/Application.php");
 //创建WebSocket
 $ws = new swoole_websocket_server("0.0.0.0", $port,  SWOOLE_PROCESS, SWOOLE_SOCK_TCP | SWOOLE_SSL);
 
-$ws->set(
-    array(
+$ws->set(array(
         'daemonize' => false,	// 是否是守护进程
         'worker_num' => 1,		//工作者进程数
         'max_request' => 10000,	// 最大连接数量
@@ -34,8 +33,7 @@ $ws->set(
         'ssl_cert_file' => '/etc/nginx/ssl/game.fx4j.com/fullchain.pem',
         'heartbeat_check_interval' => 5,
         'heartbeat_idle_time' => 600,
-    )
-);
+));
 
 //监听WebSocket连接打开事件
 $ws->on('open', function ($ws, $request) {
@@ -80,13 +78,13 @@ $ws->on('message', function($ws, $frame) {
         }
     }
 }
-       );
+);
 
 //监听WebSocket连接关闭事件
 $ws->on('close', function ($ws, $fd) {
     $ws->close($fd);   // 销毁fd链接信息
 }
-       );
+);
 
 echo "\n初始化成功\n\n";
 
