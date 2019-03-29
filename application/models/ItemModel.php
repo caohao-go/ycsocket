@@ -8,7 +8,7 @@
  * @author			caohao
  */
 class ItemModel extends CoreModel {
-    const ERROR_ITEM_NOT_SO_MUCH = "NOT_SO_MUCH"; //item不够
+    const ERROR_ITEM_NOT_SO_MUCH = "NOT_SO_MUCH";
 
     public function init() {
         $this->util_log = $this->loader->logger('item_log');
@@ -71,7 +71,7 @@ class ItemModel extends CoreModel {
             $data = json_decode($data, true);
         }
 
-        if ($stack == 1) { //若叠加上限＞1，则代表玩家持有这个物品id最多拥有的数量限制，若叠加上限 = 1，则代表玩家可持有多个物品，但每个物品在背包内会占一个格子。
+        if ($stack == 1) {
             for ($i = 0; $i < $num; $i ++) {
                 $data[] = ["num" => 1, "id" => $this->sequence()];
             }
