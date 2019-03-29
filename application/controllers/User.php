@@ -103,7 +103,6 @@ class UserController extends SuperController {
         $data['avatarUrl'] = $userInfo['avatar_url'];
         $data['nickname'] = $userInfo['nickname'];
         $data['form_id'] = $userInfo['form_id'];
-        $data['userId'] = $userInfo['user_id'];
         
         return $this->response_success_to_me($data);
     }
