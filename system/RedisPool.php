@@ -16,9 +16,7 @@ class RedisPool {
             }
             
             $pool_size = isset($util_redis_conf[$redis_name]['pool_size']) ? intval($util_redis_conf[$redis_name]['pool_size']) : RedisPool::POOL_SIZE;
-            if($pool_size <= 0) {
-            	$pool_size = RedisPool::POOL_SIZE;
-            }
+            $pool_size = $pool_size <= 0 ? RedisPool::POOL_SIZE : $pool_size;
             
             self::$instances[$redis_name] = new RedisPool($util_redis_conf[$redis_name]['host'], $util_redis_conf[$redis_name]['port'], $pool_size);
         }
@@ -42,6 +40,8 @@ class RedisPool {
             $res = $redis->connect($host, $port);
             if ($res) {
                 $this->pool->push($redis);
+            } else {
+            	throw new RuntimeException("Redis connect error [$host] [$port]");
             }
         }
     }
@@ -53,29 +53,22 @@ class RedisPool {
             $ret = call_user_func_array(array($redis, $func), $args);
             
             if ($ret === false) {
-                $this->logger->LogError("redis error [$func], reconnect [{$this->host}][{$this->port}]");
+                $this->logger->LogError("redis reconnect [{$this->host}][{$this->port}]");
+                
+                //重连一次
                 $redis->close();
                 $redis->connect($this->host, $this->port);
                 $ret = call_user_func_array(array($redis, $func), $args);
                 
                 if($ret === false) {
-                    throw new RuntimeException("redis error [$func], reconnect [{$this->host}][{$this->port}]");
+                    throw new RuntimeException("redis error after reconnect");
                 }
             }
             
             $this->pool->push($redis);
         } catch (Exception $e) {
-            $this->logger->LogError("redis error [$func], [".$e->getMessage()."], reconnect [{$this->host}][{$this->port}]");
-            $redis->close();
-            $redis->connect($this->host, $this->port);
-            
-            $ret = call_user_func_array(array($redis, $func), $args);
-            
-            if($ret === false) {
-                throw new RuntimeException("redis error [$func], reconnect [{$this->host}][{$this->port}]");
-            }
-            
             $this->pool->push($redis);
+            throw new RuntimeException("redis catch exception [".$e->getMessage()."] [{$this->host}][{$this->port}] [$func]");
         }
         
         return $ret;
