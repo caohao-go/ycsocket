@@ -8,8 +8,6 @@
  * @author			caohao
  */
 class ItemModel extends CoreModel {
-    const ERROR_ITEM_NOT_SO_MUCH = "NOT_SO_MUCH";
-
     public function init() {
         $this->util_log = $this->loader->logger('item_log');
         $this->item = $this->loader->entity("Items");
