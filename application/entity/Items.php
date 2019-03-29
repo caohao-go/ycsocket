@@ -15,8 +15,7 @@ class Items extends Entity {
             return json_decode($data, true);
         }
 
-        $db = $this->loader->database('shine_light');
-        $data = $db->get_one("items", ['id' => $id]);
+        $data = MySQLPool::instance("shine_light")->get_one("items", ['id' => $id]);
 
         if ($data == -1) {
             return;
