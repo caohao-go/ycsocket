@@ -49,7 +49,6 @@ class UserController extends SuperController {
     public function modifyInfoAction() {
         $this->util_log->LogInfo("f10001001Action:" . createLinkstringUrlencode($this->params));
         $userId = $this->params['userid'];
-        $token = $this->params['token'];
         $rawData = $this->params['rawData'];
 
         if (empty($userId)) {
