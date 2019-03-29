@@ -54,8 +54,6 @@ class ShinelightController extends SuperController {
     //返回用户道具接口
     public function userItemAction() {
         $userId = $this->params['userid'];
-        $token = $this->params['token'];
-    	
         
         $data = $this->item_model->get_user_items($userId);
         return $this->response_success_to_all(['list' => $data]);
@@ -64,7 +62,6 @@ class ShinelightController extends SuperController {
     //测试
     public function testAction() {
         $userId = $this->params['userid'];
-    	
         
         $ret = $this->item_model->insert_user_items($userId, 1, 80, 1);
         if(!$ret) {
