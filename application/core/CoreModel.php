@@ -8,13 +8,14 @@
  * @author        caohao
  */
 class CoreModel extends SuperModel {
-    var $db;
-    var $redis_key;
+    var $db_name;
+    var $redis_name;
     const EMPTY_STRING = -999999999;
 
     public function init() {
         $this->util_log = $this->loader->logger('model_log');
-        $this->redis_key = "default";
+        $this->redis_name = "default";
+        $this->db_name = "default";
     }
 
     /**
@@ -23,11 +24,7 @@ class CoreModel extends SuperModel {
      */
     private function get_redis($redis_key) {
         if (empty($redis_key)) return;
-
-        $redis = $this->loader->redis($this->redis_key);
-        if (!empty($redis)) {
-            return $redis->get($redis_key);
-        }
+        return RedisPool::instance($this->redis_name)->get($redis_key);
     }
 
     /**
@@ -40,15 +37,13 @@ class CoreModel extends SuperModel {
     private function set_redis($redis_key, $data, $redis_expire, $set_empty_flag) {
         if (empty($redis_key)) return;
 
-        $redis = $this->loader->redis($this->redis_key);
-        if (!empty($redis)) {
-            if (empty($data) && $set_empty_flag) {
-                $redis->set($redis_key, self::EMPTY_STRING);
-            } else {
-                $redis->set($redis_key, serialize($data));
-            }
-            $redis->expire($redis_key, $redis_expire);
+        if (empty($data) && $set_empty_flag) {
+            RedisPool::instance($this->redis_name)->set($redis_key, self::EMPTY_STRING);
+        } else {
+            RedisPool::instance($this->redis_name)->set($redis_key, serialize($data));
         }
+
+        RedisPool::instance($this->redis_name)->expire($redis_key, $redis_expire);
     }
 
     /**
@@ -60,10 +55,7 @@ class CoreModel extends SuperModel {
             return;
         }
 
-        $redis = $this->loader->redis($this->redis_key);
-        if (!empty($redis)) {
-            $redis->del($redis_key);
-        }
+        RedisPool::instance($this->redis_name)->del($redis_key);
     }
 
     /**
@@ -73,18 +65,18 @@ class CoreModel extends SuperModel {
      * @param string redis_key redis 缓存键值, 可空， 非空时清理键值缓存
      */
     public function insert_table($table, $data, $redis_key = "") {
-        $ret = $this->db->insert($table, $data);
+        $ret = MySQLPool::instance($this->db_name)->insert($table, $data);
 
         if (!empty($redis_key)) {
             $this->clear_redis_cache($redis_key);
         }
 
-        if ($ret == -1) {
+        if ($ret <= 0) {
             $this->util_log->LogError("error to insert_table $table , DATA=[".json_encode($data)."]");
             return 0;
         }
 
-        return intval($ret);
+        return $ret;
     }
 
     /**
@@ -96,13 +88,13 @@ class CoreModel extends SuperModel {
      */
     public function update_table($table, $where, $data, $redis_key = "") {
         if (empty($where)) return;
-        $ret = $this->db->update($table, $where, $data);
+        $ret = MySQLPool::instance($this->db_name)->update($table, $where, $data);
 
         if (!empty($redis_key)) {
             $this->clear_redis_cache($redis_key);
         }
 
-        if ($ret != -1) {
+        if ($ret) {
             return true;
         } else {
             $this->util_log->LogError("error to update_table $table [".json_encode($where)."], DATA=[".json_encode($data)."]");
@@ -117,13 +109,13 @@ class CoreModel extends SuperModel {
      * @param string redis_key redis 缓存键值, 可空， 非空时清理键值缓存
      */
     public function replace_table($table, $data, $redis_key = "") {
-        $ret = $this->db->replace($table, $data);
+        $ret = MySQLPool::instance($this->db_name)->replace($table, $data);
 
         if (!empty($redis_key)) {
             $this->clear_redis_cache($redis_key);
         }
 
-        if ($ret != -1) {
+        if ($ret) {
             return true;
         } else {
             $this->util_log->LogError("error to replace_table $table , DATA=[".json_encode($data)."]");
@@ -139,13 +131,13 @@ class CoreModel extends SuperModel {
      */
     public function delete_table($table, $where, $redis_key = "") {
         if (empty($where)) return;
-        $ret = $this->db->delete($table, $where);
+        $ret = MySQLPool::instance($this->db_name)->delete($table, $where);
 
         if (!empty($redis_key)) {
             $this->clear_redis_cache($redis_key);
         }
 
-        if ($ret != -1) {
+        if ($ret) {
             return true;
         } else {
             $this->util_log->LogError("error to delete_table $table [".json_encode($where)."]");
@@ -172,12 +164,10 @@ class CoreModel extends SuperModel {
             }
         }
 
-        $data = $this->db->get_one($table, [$key => $value]);
-        if($data != -1) {
-            $this->set_redis($redis_key, $data, $redis_expire, $set_empty_flag);
-            return $data;
-        }
-        return array();
+        $data = MySQLPool::instance($this->db_name)->get_one($table, [$key => $value]);
+
+        $this->set_redis($redis_key, $data, $redis_expire, $set_empty_flag);
+        return $data;
     }
 
     /**
@@ -198,12 +188,10 @@ class CoreModel extends SuperModel {
             }
         }
 
-        $data = $this->db->get($table, $where);
-        if($data != -1) {
-            $this->set_redis($redis_key, $data, $redis_expire, $set_empty_flag);
-            return $data;
-        }
-        return array();
+        $data = MySQLPool::instance($this->db_name)->get($table, $where);
+
+        $this->set_redis($redis_key, $data, $redis_expire, $set_empty_flag);
+        return $data;
     }
 
     /**
@@ -224,12 +212,9 @@ class CoreModel extends SuperModel {
             }
         }
 
-        $data = $this->db->get_one($table, $where);
-        if($data != -1) {
-            $this->set_redis($redis_key, $data, $redis_expire, $set_empty_flag);
-            return $data;
-        }
-        return array();
+        $data = MySQLPool::instance($this->db_name)->get_one($table, $where);
+        $this->set_redis($redis_key, $data, $redis_expire, $set_empty_flag);
+        return $data;
     }
 
     ////////////////////////////// 业务相关 /////////////////////////////////////////
@@ -241,8 +226,9 @@ class CoreModel extends SuperModel {
             return $ret;
         }
 
-        $result = $this->db->get('user_grade', ['user_id' => $userids]);
-        if (!empty($result) && $result != -1) {
+        $result = MySQLPool::instance($this->db_name)->get('user_grade', ['user_id' => $userids]);
+
+        if (!empty($result)) {
             foreach($result as $value) {
                 $ret[$value['user_id']] = $value;
             }
@@ -424,54 +410,40 @@ class CoreModel extends SuperModel {
 
     //分数更新，修改排名
     public function modify_rank($project_name, $userid, $score) {
-        $redis = $this->loader->redis('default');
-        if (empty($redis)) {
-            return false;
-        }
-        $redis->zadd("pre_{$project_name}_rank", $score, $userid);
-        $redis->del("pre_{$project_name}_rank_cache");
+        RedisPool::instance($this->redis_name)->zadd("pre_{$project_name}_rank", $score, $userid);
+        RedisPool::instance($this->redis_name)->del("pre_{$project_name}_rank_cache");
         return true;
     }
 
     //获取我的排名
     public function get_my_rank($project_name, $userid) {
-        $redis = $this->loader->redis('default');
-        if (empty($redis)) {
-            return 0;
-        }
-
-        $myRank = $redis->zrevrank("pre_{$project_name}_rank", $userid);
+        $myRank = RedisPool::instance($this->redis_name)->zrevrank("pre_{$project_name}_rank", $userid);
         $myRank = (empty($myRank) && $myRank !== 0) ? 0 : $myRank + 1;
         return $myRank;
     }
 
     //获取排名列表
     public function get_rank_list($project_name, $return_userinfo_flag = true, $start = 0, $end = 99) {
-        $redis = $this->loader->redis('default');
-        if (empty($redis)) {
-            return array();
-        }
-
         $pre_rank_cache = "pre_{$project_name}_rank_cache";
-        $result = $redis->get($pre_rank_cache);
+        $result = RedisPool::instance($this->redis_name)->get($pre_rank_cache);
         if (!empty($result)) {
             $result = unserialize($result);
         } else {
             $result = array();
-            $score_ranks = $redis->zrevrange("pre_{$project_name}_rank", $start, $end, 1);
+            $score_ranks = RedisPool::instance($this->redis_name)->zrevrange("pre_{$project_name}_rank", $start, $end, 1);
             if (!empty($score_ranks)) {
                 $user_keys = array_keys($score_ranks);
 
                 $userinfos = array();
                 if ($return_userinfo_flag) {
                     $userinfo_model = $this->loader->model('UserinfoModel');
-                    if(empty($_REQUEST['zone_id'])) {
+                    if (empty($_REQUEST['zone_id'])) {
                         $userinfos = $userinfo_model->getUserInUserids($user_keys);
                     } else {
                         $userinfos = $userinfo_model->getUserInZoneUserids($user_keys);
                     }
                 }
-                
+
                 foreach($score_ranks as $key => $value) {
                     if (!empty($userinfos[$key])) {
                         $tmp = $userinfos[$key];
@@ -484,8 +456,8 @@ class CoreModel extends SuperModel {
                 }
             }
 
-            $redis->set($pre_rank_cache, serialize($result));
-            $redis->expire($pre_rank_cache, 3600);
+            RedisPool::instance($this->redis_name)->set($pre_rank_cache, serialize($result));
+            RedisPool::instance($this->redis_name)->expire($pre_rank_cache, 3600);
         }
 
         return $result;
@@ -493,22 +465,12 @@ class CoreModel extends SuperModel {
 
     //清理排名
     public function clear_rank($project_name) {
-        $redis = $this->loader->redis('default');
-        if (empty($redis)) {
-            return array();
-        }
-
-        $redis->del("pre_{$project_name}_rank_cache");
-        $redis->del("pre_{$project_name}_rank");
+        RedisPool::instance($this->redis_name)->del("pre_{$project_name}_rank_cache");
+        RedisPool::instance($this->redis_name)->del("pre_{$project_name}_rank");
     }
 
     //清楚我的排行
     public function clear_my_rank($project_name, $userid) {
-        $redis = $this->loader->redis('default');
-        if (empty($redis)) {
-            return 0;
-        }
-
-        $myRank = $redis->zrem("pre_{$project_name}_rank", $userid);
+        $myRank = RedisPool::instance($this->redis_name)->zrem("pre_{$project_name}_rank", $userid);
     }
 }

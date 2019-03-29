@@ -8,10 +8,16 @@
  * @author			caohao
  */
 class ItemModel extends CoreModel {
+    const ERROR_ITEM_NOT_SO_MUCH = "NOT_SO_MUCH"; //item不够
 
     public function init() {
         $this->util_log = $this->loader->logger('item_log');
         $this->item = $this->loader->entity("Items");
+        $this->db_name = "shine_light";
+    }
+
+    public function sequence() {
+        return RedisPool::instance("sequence")->incr("useritem_sequence");
     }
 
     public function get_user_items($user_id) {
@@ -26,11 +32,11 @@ class ItemModel extends CoreModel {
         $result = array();
         foreach($hkeys as $key) {
             $key_array = explode("_", $key);
-            $key_data = RedisPool::instance("useritem")->hget($redis_key, $key);
+            $key_data = RedisPool::instance("useritem")->hGet($redis_key, $key);
             $val_array = json_decode($key_data, true);
 
             foreach($val_array as $k => $v) {
-                $result[] = ["item_id" => $key_array[0],  "open_flag" => $key_array[1], "num" => $v['num']];
+                $result[] = ["item_id" => $key_array[0],  "open" => $key_array[1], "num" => $v['num'], "id" => $v['id']];
             }
         }
 
@@ -57,7 +63,7 @@ class ItemModel extends CoreModel {
         $redis_key = 'user_items_' . $user_id;
         $redis_hkey = $item_id . "_" . $open_flag;
 
-        $data = RedisPool::instance("useritem")->hget($redis_key, $redis_hkey);
+        $data = RedisPool::instance("useritem")->hGet($redis_key, $redis_hkey);
 
         if (empty($data)) {
             $data = array();
@@ -65,9 +71,9 @@ class ItemModel extends CoreModel {
             $data = json_decode($data, true);
         }
 
-        if ($stack == 1) {
+        if ($stack == 1) { //若叠加上限＞1，则代表玩家持有这个物品id最多拥有的数量限制，若叠加上限 = 1，则代表玩家可持有多个物品，但每个物品在背包内会占一个格子。
             for ($i = 0; $i < $num; $i ++) {
-                $data[] = ["num" => 1];
+                $data[] = ["num" => 1, "id" => $this->sequence()];
             }
         } else {
             if (!empty($data)) {
@@ -89,13 +95,13 @@ class ItemModel extends CoreModel {
                 $n = intval($num / $stack);
                 if ($n > 0) {
                     for ($i = 0; $i < $n; $i ++) {
-                        $data[] = ["num" => $stack];
+                        $data[] = ["num" => $stack, "id" => $this->sequence()];
                     }
                 }
 
                 $m = $num % $stack;
                 if ($m > 0) {
-                    $data[] = ["num" => $m];
+                    $data[] = ["num" => $m, "id" => $this->sequence()];
                 }
             }
         }

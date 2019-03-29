@@ -9,3 +9,7 @@ $util_redis_conf['default']['port'] = 6379;
 
 $util_redis_conf['useritem']['host'] = '127.0.0.1';
 $util_redis_conf['useritem']['port'] = 6379;
+
+$util_redis_conf['sequence']['host'] = '127.0.0.1';
+$util_redis_conf['sequence']['port'] = 6379;
+$util_redis_conf['sequence']['pool_size'] = 15;

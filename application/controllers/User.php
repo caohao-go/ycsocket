@@ -112,7 +112,7 @@ class UserController extends SuperController {
 
     //ip位置
     public function locationAction() {
-    	//$this->util_log->LogInfo("f10001009Action:" . createLinkstringUrlencode($this->params));
+        //$this->util_log->LogInfo("f10001009Action:" . createLinkstringUrlencode($this->params));
         $appid = $this->params['appid'];
         $userid = $this->params['userid'];
         $version = $this->params['version'];
@@ -208,7 +208,7 @@ class UserController extends SuperController {
 
     //游戏配置
     public function gameConfAction() {
-    	//$this->util_log->LogInfo("f10001008Action:" . createLinkstringUrlencode($this->params));
+        //$this->util_log->LogInfo("f10001008Action:" . createLinkstringUrlencode($this->params));
         $appid = $this->params['appid'];
         $userid = $this->params['userid'];
         $version = $this->params['version'];
@@ -220,10 +220,7 @@ class UserController extends SuperController {
     }
 
     private function clearUserCache($user_id) {
-        $redis = $this->loader->redis("userinfo");
-        if (!empty($redis)) {
-            $redis->del("pre_redis_user_info_" . $user_id);
-        }
+    	MySQLPool::instance("default")->del("pre_redis_user_info_" . $user_id);
     }
     
     

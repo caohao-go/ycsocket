@@ -15,7 +15,6 @@ class Logger {
     private $LogPath;
     private $LogFileName;
     private $m_InitOk = false;
-    private $StatisticInfo;
     private $ip;
     private $params;
 
@@ -39,15 +38,6 @@ class Logger {
         /* 日志文件, 不写默认为 DEFAULT_LOG_FILE_NAME */
         $this->LogFileName = empty($config['file_name']) ? DEFAULT_LOG_FILE_NAME : $config['file_name'];
         $this->LogFileName = $this->LogPath . "/" . $this->LogFileName . "." . date('Ymd') . ".log";
-
-        /* 统计信息 */
-        if (!empty($config['statistic'])) {
-            $this->StatisticInfo = "";
-            foreach($config['statistic'] as $key => $value) {
-                $this->StatisticInfo .= $key . "=" . $value . ",";
-            }
-            $this->StatisticInfo = substr($this->StatisticInfo, 0, -1);
-        }
     }
 
     /**
@@ -101,7 +91,7 @@ class Logger {
                             $privity,
                             $datestr,
                             $this->ip,
-                            $this->StatisticInfo,
+                            '',
                             $error_msg);
             file_put_contents($this->LogFileName, $log, FILE_APPEND);
         } else if ($privity === Logger::NOTICE) { //提示日志

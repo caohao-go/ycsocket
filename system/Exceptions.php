@@ -10,6 +10,7 @@ if ( ! function_exists('show_error')) {
         } else {
             echo "Message: $message\n";
         }
+
         echo "\n";
         exit;
     }
@@ -41,7 +42,7 @@ if ( ! function_exists('log_message')) {
         }
 
         $message = $level . ' - ' . date('Y-m-d H:i:s') . ' --> ' . $msg . "\n";
-        @file_put_contents( LOG_PATH . "/SuperCI-" . date('Y-m-d') . ".log.wf", $message , FILE_APPEND);
+        @file_put_contents( LOG_PATH . "/Ycsocket-" . date('Y-m-d') . ".log.wf", $message , FILE_APPEND);
     }
 }
 

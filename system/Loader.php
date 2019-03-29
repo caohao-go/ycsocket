@@ -17,8 +17,6 @@ class Loader {
     private $models;
     private $libraries;
     private $loggers;
-    private $dbs;
-    private $redises;
 
     public function __construct(& $controller) {
         $this->ip = $controller->get_ip();
@@ -72,75 +70,5 @@ class Loader {
         }
 
         return $this->loggers[$key];
-    }
-
-    public function & database($params = '') {
-        if (empty($params)) {
-            $params = 'default';
-        }
-
-        if (isset($this->dbs[$params])) {
-            return $this->dbs[$params];
-        }
-
-        global $util_db_config;
-
-        $db_log = $this->logger("database");
-
-        if ( ! isset($util_db_config) OR count($util_db_config) == 0) {
-            $db_log->LogError('No database connection settings were found in the database config file.');
-            die('No database connection settings were found in the database config file.');
-        }
-
-        if (! isset($util_db_config[$params])) {
-            $db_log->LogError('You have specified an invalid database connection group.');
-            die('You have specified an invalid database connection group.');
-        }
-
-        $config = $util_db_config[$params];
-
-        $this->dbs[$params] = new DatabaseProxy($config, $db_log);
-
-        if ($this->dbs[$params]->autoinit == TRUE) {
-            $this->dbs[$params]->initialize();
-        }
-
-        return $this->dbs[$params];
-    }
-
-    public function & redis($redis_name) {
-        if (empty($this->redises[$redis_name])) {
-            $util_log = $this->logger('redis');
-
-            global $util_redis_conf;
-
-            if (!isset($util_redis_conf[$redis_name]['host'])) {
-                $util_log->LogError("Loader::redis:  redis config not exist");
-                return;
-            }
-
-            $this->redises[$redis_name] = new Redis();
-
-            if (substr($util_redis_conf[$redis_name]['host'], 0, 1) == '/') {
-                $flag = $this->redises[$redis_name]->connect($util_redis_conf[$redis_name]['host']);
-            } else {
-                $flag = $this->redises[$redis_name]->connect($util_redis_conf[$redis_name]['host'], $util_redis_conf[$redis_name]['port']);
-            }
-
-            if (!$flag) {
-                $util_log->LogError("Loader::redis: redis connect error");
-                return null;
-            }
-
-            if (!empty($util_redis_conf[$redis_name]['auth'])) {
-                $suc = $this->redises[$redis_name]->auth($util_redis_conf[$redis_name]['auth']);
-                if (!$suc) {
-                    $util_log->LogError("Loader::redis:  redis auth error");
-                    return null;
-                }
-            }
-        }
-
-        return $this->redises[$redis_name];
     }
 }

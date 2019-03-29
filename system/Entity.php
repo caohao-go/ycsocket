@@ -2,7 +2,7 @@
 
 class Entity {
     protected $loader;
-    
+
     public function __construct(& $loader) {
         $this->loader = & $loader;
         $this->init();
@@ -10,7 +10,7 @@ class Entity {
 
     protected function init() {
     }
-    
+
     public function getGlobal($id) {
         $data = GlobalEntity::get($id);
         return $data;

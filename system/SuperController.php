@@ -36,20 +36,19 @@ class SuperController {
     }
 
     private function get_result_success($message) {
-        if (empty($message['tagcode'])) {
-            if (empty($message)) {
-                $message = array('c' => $this->params['c'], 'm' => $this->params['m'], 'tagcode' => '00000000');
-            } else {
-                $code = array('c' => $this->params['c'], 'm' => $this->params['m'], 'tagcode' => '00000000');
-                $message = array_merge($code, $message);
-            }
+        if (empty($message)) {
+            $message = array('c' => $this->params['c'], 'm' => $this->params['m'], 'code' => 0);
+        } else {
+            $message['c'] = $this->params['c'];
+            $message['m'] = $this->params['m'];
+            $message['code'] = 0;
         }
 
         return json_encode($message);
     }
 
     private function get_result_error($code, $message) {
-        $data = array('c' => $this->params['c'], 'm' => $this->params['m'], "tagcode" => "" . $code, "description" => $message);
+        $data = array('c' => $this->params['c'], 'm' => $this->params['m'], "code" => $code, "msg" => $message);
         return json_encode($data);
     }
 
