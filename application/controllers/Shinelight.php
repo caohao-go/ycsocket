@@ -16,7 +16,6 @@ class ShinelightController extends SuperController {
 
     //公告
     public function gonggaoAction() {
-        $userId = $this->params['userid'];
         $content = $this->params['content'];
 
         if (empty($content)) {
