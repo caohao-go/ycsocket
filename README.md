@@ -1,5 +1,5 @@
 # ycsocket
-基于 swoole 和 ycdatabase 的 websocket 框架
+基于 swoole 和 ycdatabase 的 websocket 框架，全异步协程，高并发
 
 环境：
 PHP7+
