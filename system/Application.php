@@ -59,30 +59,32 @@ class Application {
 
         $controller = ucfirst($params['c']);
         $action = $params['m'] . "Action";
-        
         $class_name = $controller . "Controller";
-            
-		if(!class_exists($class_name)) {
-			show_404("$controller/$action");
-			return $this->response_error(2, "route error");
-		}
-		
-		$obj = new $class_name($this->input_fd, $params, $clientInfo);
-		
-		if (!method_exists($obj, $action)) {
-			unset($obj);
-			show_404("$controller/$action");
-			return $this->response_error(2, "route error");
-		}
-		
+        
         try {
+			$obj = new $class_name($this->input_fd, $params, $clientInfo);
+			
+			if (!method_exists($obj, $action)) {
+				unset($obj);
+				show_404("$controller/$action");
+				return $this->response_error(3, "route error");
+			}
+			
             $ret = $obj->$action();
             unset($obj);
             return $ret;
         } catch (Exception $e) {
         	unset($obj);
-			show_404("$controller/$action");
-            return $this->response_error(2, "route error");
+        	$logger = new Logger(array('file_name' => 'exception_log'));
+        	$logger->LogError("Exception File=[".$e->getFile()."|".$e->getLine()."] Code=[".$e->getCode()."], Message=[".$e->getMessage()."]");
+        	
+        	echo "Catch An Exception \n";
+        	echo "File:" . $e->getFile() . "\n";
+        	echo "Line:" . $e->getLine() . "\n";
+        	echo "Code:" . $e->getCode() . "\n";
+        	echo "Message:" . $e->getMessage() . "\n";
+        	
+            return $this->response_error(2, "system exception");
         }
     }
 
