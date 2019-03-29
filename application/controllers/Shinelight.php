@@ -47,6 +47,7 @@ class ShinelightController extends SuperController {
         $result['nickname'] = $nickname;
         $result['avatar_url'] = $avatar_url;
         $result['gender'] = $gender;
+        $result['content'] = $content;
 
         return $this->response_success_to_all($result);
     }
