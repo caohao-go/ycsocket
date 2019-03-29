@@ -210,7 +210,6 @@ class UserController extends SuperController {
     public function gameConfAction() {
         //$this->util_log->LogInfo("f10001008Action:" . createLinkstringUrlencode($this->params));
         $appid = $this->params['appid'];
-        $userid = $this->params['userid'];
         $version = $this->params['version'];
 
         $config_file = Loader::config("gameconf");
@@ -222,7 +221,5 @@ class UserController extends SuperController {
     private function clearUserCache($user_id) {
     	MySQLPool::instance("default")->del("pre_redis_user_info_" . $user_id);
     }
-    
-    
     
 }
