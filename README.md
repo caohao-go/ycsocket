@@ -10,7 +10,7 @@ swoole
 
 客户端是一个聊天窗口
 
-支持Redis 协程线程池，源码位于 system/RedisPool，支持失败自动重连
+支持 Redis 协程线程池，源码位于 system/RedisPool，支持失败自动重连
 
 支持 MySQL 协程连接池， 源码位于 system/MySQLPool，支持失败自动重连
 
