@@ -23,10 +23,6 @@ class ShinelightController extends SuperController {
             return $this->response_error(13342339, '内容不能为空');
         }
 
-        if ($userId != 99999999) {
-            return $this->response_error(133425539, '内容不能为空');
-        }
-
         $result = array();
         $result['content'] =  $content;
 		
