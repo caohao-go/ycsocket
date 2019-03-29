@@ -7,7 +7,7 @@
         if(window.WebSocket){
             var webSocket = new WebSocket("wss://game.fx4j.com:9509");
             webSocket.onopen = function (event) {
-                webSocket.send('{"userid":"6818810", "no":"test", "nickname":"__weng", "avatar_url":"https://wx.qlogo.cn/mmopen/vi_32/SByWFrnHfgXbUucZcpzv0l66Y4sl3cXnvgbibxfIVFk21z0OsVq2f2HxBYZyfic5QibJWblibPZoagTwAapPehOH6g/132", "content":"i am ok", "timestamp":1538190909353, "token":"5a350bc05bbbd9556f719a0b8cf2a5ed", "auth_rand":743066935, "signature":"e93cf378d5b05878b8219664c6517798", "c":"dabaojian", "m":"chat"}');
+                webSocket.send('{"c":"shinelight", "m":"test", "userid":"12323123"}');
             };
             webSocket.onmessage = function (event) {
                 var content = document.getElementById('content');
