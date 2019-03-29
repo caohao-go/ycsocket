@@ -62,7 +62,7 @@ class ShinelightController extends SuperController {
     //测试
     public function testAction() {
         $userId = $this->params['userid'];
-        
+
         $ret = $this->item_model->insert_user_items($userId, 1, 80, 1);
         if(!$ret) {
         	return $this->response_error(99, 'system error');
