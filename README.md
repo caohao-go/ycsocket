@@ -3,7 +3,7 @@
 
 环境：
 PHP7+
-ycdatabase
+ycdatabase   //一个C语言扩展的ORM，本框架协程数据库需要该扩展支持，https://github.com/caohao-php/ycdatabase
 swoole
 
 我写游戏后端的时候写的
