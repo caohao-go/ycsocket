@@ -75,27 +75,26 @@ class Application {
             return $ret;
         } catch (Exception $e) {
             unset($obj);
-            
-	    if($e->getMessage() != 'swoole exit.') {
-	            $logger = new Logger(array('file_name' => 'exception_log'));
-	            $logger->LogError("Catch An Exception File=[".$e->getFile()."|".$e->getLine()."] Code=[".$e->getCode()."], Message=[".$e->getMessage()."]");
-				
-	            echo "Catch An Exception \n";
-	            echo "File:" . $e->getFile() . "\n";
-	            echo "Line:" . $e->getLine() . "\n";
-	            echo "Code:" . $e->getCode() . "\n";
-	            echo "Message:" . $e->getMessage() . "\n";
-            	return $this->response_error(99, "system exception");
-        	} else {
-        		echo "swoole exit.\n";
-        		return $this->response_error(99, "application exit");
-        	}
+
+            if ($e->getMessage() != 'swoole exit.') {
+                $logger = new Logger(array('file_name' => 'exception_log'));
+                $logger->LogError("Catch An Exception File=[".$e->getFile()."|".$e->getLine()."] Code=[".$e->getCode()."], Message=[".$e->getMessage()."]");
+
+                echo "Catch An Exception \n";
+                echo "File:" . $e->getFile() . "\n";
+                echo "Line:" . $e->getLine() . "\n";
+                echo "Code:" . $e->getCode() . "\n";
+                echo "Message:" . $e->getMessage() . "\n";
+                return $this->response_error(99, "system exception");
+            } else {
+                echo "swoole exit.\n";
+                return $this->response_error(99, "application exit");
+            }
         }
     }
 
     //验签过程
     protected function _auth(& $params) {
-
         return 0;
     }
 
