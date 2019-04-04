@@ -1,7 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-include_once(APP_ROOT . "/config/global.php");
-
 class GlobalEntity {
     static private $instance;
     public $table;
@@ -75,7 +73,7 @@ class GlobalEntity {
     }
 }
 
-$table = new swoole_table(4096);
+$table = new swoole_table(16384);
 $table->column('int_data', swoole_table::TYPE_INT);
 $table->column('data', swoole_table::TYPE_STRING);
 $table->column('expire', swoole_table::TYPE_INT);

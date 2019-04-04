@@ -158,10 +158,6 @@ class MySQLPool {
     }
 
     function get_one($table = '', $where = array(), $columns = "*") {
-        if (empty($table) || empty($columns)) {
-            throw new RuntimeException("select_table_or_columns_must_be_set");
-        }
-
         $where['LIMIT'] = 1;
         $ret = $this->get($table, $where, $columns);
         if (empty($ret) || !is_array($ret)) {
