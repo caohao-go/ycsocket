@@ -11,8 +11,6 @@ class MySQLPool {
     var $password = '';
     var $dbname = '';
     var $port = 3306;
-    var $pconnect = FALSE;
-    var $db_debug = FALSE;
     var $char_set = 'utf8';
     var $dbcollat = 'utf8_general_ci';
 
@@ -49,8 +47,6 @@ class MySQLPool {
             $this->$key = $val;
         }
 
-        $this->ycdb = new ycdb(["unix_socket" => ""]);
-
         $this->pool = new Swoole\Coroutine\Channel($size);
 
         for ($i = 0; $i < $size; $i++) {
@@ -72,15 +68,12 @@ class MySQLPool {
             throw new RuntimeException("insert_table_or_data_must_be_set");
         }
 
-        $ret = $this->ycdb->insert_sql($table, $data);
-        if (empty($ret) || $ret == -1) {
+        $sql_stat = swoole_orm::insert($table, $data);
+        if ($sql_stat === false) {
             throw new RuntimeException("insert_sql error [$table][".json_encode($data)."]");
         }
 
-        $sql = $ret['query'];
-        $map = $ret['map'];
-        $sql = str_replace(array_keys($map), "?", $sql);
-        $ret = $this->query($sql, array_values($map), $mysql);
+        $ret = $this->query($sql_stat['sql'], $sql_stat['bind_value'], $mysql);
         if (!empty($ret)) {
             return $mysql->insert_id;
         } else {
@@ -93,15 +86,12 @@ class MySQLPool {
             throw new RuntimeException("replace_table_or_data_must_be_set");
         }
 
-        $ret = $this->ycdb->replace_sql($table, $data);
-        if (empty($ret) || $ret == -1) {
+        $sql_stat = swoole_orm::replace($table, $data);
+        if ($sql_stat === false) {
             throw new RuntimeException("replace_sql error [$table][".json_encode($data)."]");
         }
 
-        $sql = $ret['query'];
-        $map = $ret['map'];
-        $sql = str_replace(array_keys($map), "?", $sql);
-        $ret = $this->query($sql, array_values($map));
+        $ret = $this->query($sql_stat['sql'], $sql_stat['bind_value']);
         return $ret;
     }
 
@@ -110,15 +100,12 @@ class MySQLPool {
             throw new RuntimeException("update_table_or_data_must_be_set");
         }
 
-        $ret = $this->ycdb->update_sql($table, $data, $where);
-        if (empty($ret) || $ret == -1) {
+        $sql_stat = swoole_orm::update($table, $data, $where);
+        if ($sql_stat === false) {
             throw new RuntimeException("update_sql error [$table][".json_encode($data)."][".json_encode($where)."]");
         }
 
-        $sql = $ret['query'];
-        $map = $ret['map'];
-        $sql = str_replace(array_keys($map), "?", $sql);
-        $ret = $this->query($sql, array_values($map));
+        $ret = $this->query($sql_stat['sql'], $sql_stat['bind_value']);
         return $ret;
     }
 
@@ -127,15 +114,12 @@ class MySQLPool {
             throw new RuntimeException("delete_table_or_where_must_be_set");
         }
 
-        $ret = $this->ycdb->delete_sql($table, $where);
-        if (empty($ret) || $ret == -1) {
+        $sql_stat = swoole_orm::delete($table, $where);
+        if ($sql_stat === false) {
             throw new RuntimeException("replace_sql error [$table][".json_encode($where)."]");
         }
 
-        $sql = $ret['query'];
-        $map = $ret['map'];
-        $sql = str_replace(array_keys($map), "?", $sql);
-        $ret = $this->query($sql, array_values($map));
+        $ret = $this->query($sql_stat['sql'], $sql_stat['bind_value']);
         return $ret;
     }
 
@@ -144,16 +128,12 @@ class MySQLPool {
             throw new RuntimeException("select_table_or_columns_must_be_set");
         }
 
-        $ret = $this->ycdb->select_sql($table, $columns, $where);
-        if (empty($ret) || $ret == -1) {
+        $sql_stat = swoole_orm::select($table, $columns, $where);
+        if ($sql_stat === false) {
             throw new RuntimeException("select_sql error [$table][".json_encode($where)."][".json_encode($columns)."]");
         }
 
-        $sql = $ret['query'];
-        $map = $ret['map'];
-
-        $sql = str_replace(array_keys($map), "?", $sql);
-        $ret = $this->query($sql, array_values($map));
+        $ret = $this->query($sql_stat['sql'], $sql_stat['bind_value']);
         return $ret;
     }
 
@@ -182,7 +162,7 @@ class MySQLPool {
         return $ret;
     }
 
-    function real_query(& $mysql, & $sql, & $map) {
+    private function real_query(& $mysql, & $sql, & $map) {
         if (empty($map)) {
             return $mysql->query($sql);
         } else {
