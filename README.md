@@ -17,3 +17,5 @@ swoole
 支持 MySQL 协程连接池， 源码位于 system/MySQLPool，支持失败自动重连
 
 支持共享内存 entity ,可以支持超时更新内容
+
+加入Actor模型
