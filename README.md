@@ -18,4 +18,4 @@ swoole
 
 支持共享内存 entity ,可以支持超时更新内容
 
-加入Actor模型
+加入Actor模型，基于unixsocke 和 channel 的高并发模型
