@@ -7,7 +7,7 @@ class GlobalEntity {
         }
 
         global $globalTable;
-        return $globalTable->set($id, array("data"=> base64_encode(swoole_serialize::pack($data)), "int_data" => 0, "expire" => intval($expire)));
+        return $globalTable->set($id, array("data"=> base64_encode(serialize($data)), "int_data" => 0, "expire" => intval($expire)));
     }
 
     static public function get($id) {
@@ -20,7 +20,7 @@ class GlobalEntity {
                 $globalTable->del($id);
                 return;
             } else {
-                return swoole_serialize::unpack(base64_decode($data['data']));
+                return swoole_serialize::unserialize(base64_decode($data['data']));
             }
         }
     }
