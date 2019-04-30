@@ -1,30 +1,19 @@
 <?php
 
-class Items extends Entity {
-    const EMPTY_STRING = "-999999999";
+class Items {
     const GLOBAL_PRE_ITEMS = 'global_pre_items_';
 
-    public function init() {
-    }
-
-    public function get_item_by_id($id) {
-        $data = $this->getGlobal(Items::GLOBAL_PRE_ITEMS . $id);
-        if ($data == self::EMPTY_STRING) {
-            return;
-        } else if (!empty($data)) {
-            return json_decode($data, true);
+    public static function get_item_by_id($id) {
+        $data = GlobalEntity::get(Items::GLOBAL_PRE_ITEMS . $id);
+        if (!empty($data)) {
+            return $data;
         }
 
         $data = MySQLPool::instance("shine_light")->get_one("items", ['id' => $id]);
 
-        if ($data == -1) {
-            return;
-        } else if (!empty($data)) {
-            $this->setGlobal(Items::GLOBAL_PRE_ITEMS . $id, json_encode($data), 300);
+        if (!empty($data)) {
+            GlobalEntity::set(Items::GLOBAL_PRE_ITEMS . $id, $data, 300);
             return $data;
-        } else {
-            $this->setGlobal(Items::GLOBAL_PRE_ITEMS . $id, self::EMPTY_STRING, 100);
-            return;
         }
     }
 }

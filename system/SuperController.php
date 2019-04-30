@@ -75,6 +75,18 @@ class SuperController {
     }
 
     /**
+    * json输出
+    * @param array $data
+    */
+    protected function response_success_to_uid($uid, $message) {
+        $data = array();
+
+        $data["send_user"] = array(Userfd::getInstance()->get($uid));
+        $data["msg"] = $this->get_result_success($message);
+        return $data;
+    }
+
+    /**
      * 返回错误code以及错误信息
      * @param sting $message   返回错误的提示信息
      * @param int $type 	返回的方式

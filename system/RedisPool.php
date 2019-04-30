@@ -12,8 +12,8 @@ class RedisPool {
         if (!isset(self::$instances[$redis_name])) {
             global $util_redis_conf;
             if (!isset($util_redis_conf[$redis_name]['host'])) {
-            	$logger = new Logger(array('file_name' => 'redis_log'));
-            	$logger->LogError("Loader::redis:  redis config not exist [$redis_name]");
+                $logger = new Logger(array('file_name' => 'redis_log'));
+                $logger->LogError("Loader::redis:  redis config not exist [$redis_name]");
                 throw new RuntimeException("Loader::redis:  redis config not exist");
             }
 
@@ -53,8 +53,7 @@ class RedisPool {
         try {
             $redis = $this->pool->pop();
             $ret = call_user_func_array(array($redis, $func), $args);
-
-            if ($ret === false) {
+            if ($ret === false && $redis->errCode != 0) {
                 $this->logger->LogError("redis reconnect [{$this->host}][{$this->port}]");
 
                 //重连一次
@@ -66,7 +65,7 @@ class RedisPool {
 
                 $ret = call_user_func_array(array($redis, $func), $args);
 
-                if ($ret === false) {
+                if ($ret === false && $redis->errCode != 0) {
                     throw new RuntimeException("redis error after reconnect");
                 }
             }

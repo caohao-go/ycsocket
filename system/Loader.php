@@ -34,7 +34,7 @@ class Loader {
 
     public function entity($entity_name) {
         if (!isset($this->entities[$entity_name])) {
-            $this->entities[$entity_name] = new $entity_name($this);
+            $this->entities[$entity_name] = new $entity_name();
         }
 
         return $this->entities[$entity_name];

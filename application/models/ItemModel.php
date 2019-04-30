@@ -10,7 +10,6 @@
 class ItemModel extends CoreModel {
     public function init() {
         $this->util_log = $this->loader->logger('item_log');
-        $this->item = $this->loader->entity("Items");
         $this->db_name = "shine_light";
     }
 
@@ -42,7 +41,7 @@ class ItemModel extends CoreModel {
     }
 
     public function insert_user_items($user_id, $item_id, $num = 1, $open_flag = 1) {
-        $item_info = $this->item->get_item_by_id($item_id);
+        $item_info = Items::get_item_by_id($item_id);
 
         if (empty($item_info)) {
             $this->util_log->LogError("insert_user_items, not find item_id [$item_id]");

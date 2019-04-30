@@ -35,6 +35,11 @@ $ws->set(array(
         'heartbeat_idle_time' => 600,
 ));
 
+//work start
+$ws->on('WorkerStart', function ($ws, $request) {
+	Userfd::getInstance($ws);
+});
+
 //监听WebSocket连接打开事件
 $ws->on('open', function ($ws, $request) {
 });
@@ -50,6 +55,11 @@ $ws->on('message', function($ws, $frame) {
     if (empty($input) || empty($input['c']) || empty($input['m'])) { //输入格式错误
         $ws->push($frame->fd, json_encode(array("tagcode" => "1", "description" => "input error", "data" => $frame->data)));
     } else {
+        if (!empty($input['userid'])) { //绑定 userid 到 fd
+            $ws->bind($frame->fd, $input['userid']);
+            Userfd::getInstance()->set($input['userid'], $frame->fd);
+        }
+
         $application = new Application($frame->fd);
         $result = $application->run($input, $ws->getClientInfo($frame->fd));
         unset($application);
@@ -77,14 +87,13 @@ $ws->on('message', function($ws, $frame) {
             }
         }
     }
-}
-);
+});
 
 //监听WebSocket连接关闭事件
 $ws->on('close', function ($ws, $fd) {
-    $ws->close($fd);   // 销毁fd链接信息
-}
-);
+    $client_info = $ws->getClientInfo($fd);
+    Userfd::getInstance()->del($client_info['uid']);
+});
 
 echo "\n初始化成功\n\n";
 

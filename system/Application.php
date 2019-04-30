@@ -13,9 +13,9 @@ echo "\n加载基础库 ...\n";
 include(BASEPATH . "/Exceptions.php");
 set_error_handler('_exception_handler'); //设置异常处理函数
 
+include(BASEPATH . "/Singleton.php");
 include(BASEPATH . "/Loader.php");
 include(BASEPATH . "/Logger.php");
-include(BASEPATH . "/Entity.php");
 include(BASEPATH . "/RedisPool.php");
 include(BASEPATH . "/MySQLPool.php");
 include(BASEPATH . "/SuperController.php");
@@ -23,11 +23,16 @@ include(BASEPATH . "/SuperModel.php");
 include(APP_ROOT . "/core/CoreModel.php");
 
 echo "\n创建跨进程全局实体类...\n";
-$global = require(BASEPATH . "/Global.php");
-$instance = GlobalEntity::instance($global);
-if (empty($instance)) {
-    die('Create global entity failed');
-}
+require(BASEPATH . "/Global.php");
+$globalTable = new swoole_table(40960);
+$globalTable->column('int_data', swoole_table::TYPE_INT);
+$globalTable->column('data', swoole_table::TYPE_STRING, 4096);
+$globalTable->column('expire', swoole_table::TYPE_INT);
+$globalTable->create();
+
+$fdUserTable = new swoole_table(102400);
+$fdUserTable->column('fd', swoole_table::TYPE_INT);
+$fdUserTable->create();
 
 echo "\n加载 Controller ...\n";
 include_file(APP_ROOT . "/controllers");
