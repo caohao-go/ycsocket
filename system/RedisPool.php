@@ -12,8 +12,8 @@ class RedisPool {
         if (!isset(self::$instances[$redis_name])) {
             global $util_redis_conf;
             if (!isset($util_redis_conf[$redis_name]['host'])) {
-                $logger = new Logger(array('file_name' => 'redis_log'));
-                $logger->LogError("Loader::redis:  redis config not exist [$redis_name]");
+            	$logger = new Logger(array('file_name' => 'redis_log'));
+            	$logger->LogError("Loader::redis:  redis config not exist [$redis_name]");
                 throw new RuntimeException("Loader::redis:  redis config not exist");
             }
 

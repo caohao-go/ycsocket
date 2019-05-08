@@ -6,15 +6,13 @@
  * Time: 11:39
  */
 
-class Timer
-{
+class Timer {
     use Singleton;
 
     protected $timerList = [];
     protected $timerMap = [];
 
-    function loop(int $ms, callable $callback, $name = null): int
-    {
+    function loop(int $ms, callable $callback, $name = null): int {
         $id = swoole_timer_tick($ms, $callback);
         $this->timerList[$id] = $id;
         if ($name !== null) {
@@ -23,8 +21,7 @@ class Timer
         return $id;
     }
 
-    function clear($timerIdOrName): bool
-    {
+    function clear($timerIdOrName): bool {
         if (!isset($this->timerMap[md5($timerIdOrName)]) && !isset($this->timerList[$timerIdOrName])) {
             return false;
         }
@@ -49,8 +46,7 @@ class Timer
         return true;
     }
 
-    function clearAll(): bool
-    {
+    function clearAll(): bool {
         foreach ($this->timerList as $id) {
             swoole_timer_clear($id);
         }
@@ -59,8 +55,7 @@ class Timer
         return true;
     }
 
-    function after(int $ms, callable $callback): int
-    {
+    function after(int $ms, callable $callback): int {
         return swoole_timer_after($ms, $callback);
     }
 }

@@ -28,7 +28,7 @@ class Loader {
             return self::$configs[$conf_name];
         }
 
-        self::$configs[$conf_name] = include(APP_ROOT . "/config/".$conf_name.".php");
+        self::$configs[$conf_name] = include(APPROOT . "/config/".$conf_name.".php");
         return self::$configs[$conf_name];
     }
 

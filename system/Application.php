@@ -4,9 +4,9 @@ define('LOG_PATH', '/data/app/logs/super_server');
 define('PHP_LOG_THRESHOLD', 1); //错误记录级别 ERROR=1, DEBUG=2, WARNING=3, NOTICE=4, INFO=5, ALL=6
 
 echo "加载配置 ...\n";
-include(APP_ROOT . "/config/constants.php");
-include(APP_ROOT . "/config/database.php");
-include(APP_ROOT . "/config/redis.php");
+include(APPROOT . "/config/constants.php");
+include(APPROOT . "/config/database.php");
+include(APPROOT . "/config/redis.php");
 
 echo "\n加载基础库 ...\n";
 
@@ -20,7 +20,7 @@ include(BASEPATH . "/RedisPool.php");
 include(BASEPATH . "/MySQLPool.php");
 include(BASEPATH . "/SuperController.php");
 include(BASEPATH . "/SuperModel.php");
-include(APP_ROOT . "/core/CoreModel.php");
+include(APPROOT . "/core/CoreModel.php");
 
 echo "\n创建跨进程全局实体类...\n";
 require(BASEPATH . "/Global.php");
@@ -30,24 +30,37 @@ $globalTable->column('data', swoole_table::TYPE_STRING, 4096);
 $globalTable->column('expire', swoole_table::TYPE_INT);
 $globalTable->create();
 
+$roomActorId = new swoole_table(1);
+$roomActorId->column('id', swoole_table::TYPE_STRING, 32);
+$roomActorId->create();
+
 $fdUserTable = new swoole_table(102400);
 $fdUserTable->column('fd', swoole_table::TYPE_INT);
 $fdUserTable->create();
 
+echo "\n加载 Actor ...\n";
+include_file(BASEPATH . "/actor");
+
 echo "\n加载 Controller ...\n";
-include_file(APP_ROOT . "/controllers");
+include_file(APPROOT . "/controllers");
 
 echo "\n加载 Model ...\n";
-include_file(APP_ROOT . "/models");
+include_file(APPROOT . "/models");
+
+echo "\n加载 Logic ...\n";
+include_file(APPROOT . "/logic");
 
 echo "\n加载 Library ...\n";
-include_file(APP_ROOT . "/library");
+include_file(APPROOT . "/library");
 
 echo "\n加载 entity ...\n";
-include_file(APP_ROOT . "/entity");
+include_file(APPROOT . "/entity");
 
 echo "\n加载 helper ...\n";
-include_file(APP_ROOT . "/helpers");
+include_file(APPROOT . "/helpers");
+
+echo "\n注册 Actor ...\n";
+register_actor();
 
 class Application {
     var $input_fd;
@@ -56,7 +69,7 @@ class Application {
         $this->input_fd = $fd;
     }
 
-    public function run(& $params, $clientInfo) {
+    public function run(& $params, $clientInfo, & $ws) {
         $ret = $this->_auth($params);
         if ($ret != 0) {
             return $ret;
@@ -67,7 +80,7 @@ class Application {
         $class_name = $controller . "Controller";
 
         try {
-            $obj = new $class_name($this->input_fd, $params, $clientInfo);
+            $obj = new $class_name($this->input_fd, $params, $clientInfo, $ws);
 
             if (!method_exists($obj, $action)) {
                 unset($obj);
@@ -125,4 +138,10 @@ function include_file($path) {
         }
         closedir($handle);
     }
+}
+
+function register_actor() {
+	Actor::getInstance()->register(RoomLogic::class, 1);
+	Actor::getInstance()->register(PkLogic::class, 1);
+	Actor::getInstance()->register(GameLogic::class, 1);
 }

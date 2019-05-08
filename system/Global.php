@@ -20,7 +20,7 @@ class GlobalEntity {
                 $globalTable->del($id);
                 return;
             } else {
-                return swoole_serialize::unserialize(base64_decode($data['data']));
+                return unserialize(base64_decode($data['data']));
             }
         }
     }

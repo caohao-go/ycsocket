@@ -8,125 +8,112 @@
 
 use Swoole\Coroutine\Channel;
 
-class ActorClient
-{
-    private $actorConfig;
+class ActorClient {
     private $tempDir;
-    private $serverName;
+    private $actorName;
     private $actorId;
+    private $actorProcessNum;
 
-    function __construct(ActorConfig $config, string $tempDir, string $serverName)
-    {
-        $this->actorConfig = $config;
+    function __construct(ActorConfig $config, string $tempDir) {
         $this->tempDir = $tempDir;
-        $this->serverName = $serverName;
+        $this->actorName = $config->getActorName();
+        $this->actorProcessNum = $config->getActorProcessNum();
     }
-    
+
+    function setActorId($id) {
+        $this->actorId = $id;
+        return $this;
+    }
+
     function getActorId() {
-    	return $this->actorId;
+        return $this->actorId;
     }
-    
-    /*
-     * 创建默认一直等待
-     */
-    function new($timeout, $arg)
-    {
+
+    function new($timeout, $arg) {
         $command = new Command();
         $command->setCommand('new');
         $command->setArg($arg);
-        
-		$i = rand(1, $this->actorConfig->getActorProcessNum());
-		
-		$this->actorId = UnixClient::sendAndRecv($command, $timeout, $this->generateSocketByProcessIndex($i));
-		return $this->actorId;
+
+        $i = rand(1, $this->actorProcessNum);
+
+        $this->actorId = UnixClient::sendAndRecv($command, $timeout, $this->generateSocketByProcessIndex($i));
+        return $this->actorId;
     }
-	
-    function exist(string $actorId, $timeout = 3.0)
-    {
+
+    function exist(string $actorId, $timeout = 3.0) {
         $command = new Command();
         $command->setCommand('exist');
         $command->setArg($actorId);
-        
+
         return UnixClient::sendAndRecv($command, $timeout, $this->generateSocketByProcessIndex(self::actorIdToProcessIndex($actorId)));
     }
-    
-    function destroy(...$arg)
-    {
+
+    function destroy(...$arg) {
         $processIndex = self::actorIdToProcessIndex($this->actorId);
         $command = new Command();
         $command->setCommand('destroy');
         $command->setArg([
-            'id' => $this->actorId,
-            'arg' => $arg
-        ]);
-        
+                             'id' => $this->actorId,
+                             'arg' => $arg
+                         ]);
+
         return UnixClient::sendAndRecv($command, 3.0, $this->generateSocketByProcessIndex($processIndex));
     }
 
-    function destroyAll(...$arg)
-    {
+    function destroyAll(...$arg) {
         $command = new Command();
         $command->setCommand('destroyAll');
         $command->setArg($arg);
         return $this->broadcast($command, 3.0);
     }
-    
-    
-    function __call($func, $args)
-    {
+
+    function __call($func, $args) {
         $processIndex = self::actorIdToProcessIndex($this->actorId);
         $command = new Command();
         $command->setCommand('call');
         $command->setArg([
-            'id' => $this->actorId,
-            'func'=> $func,
-            'arg'=> $args
-        ]);
-        
+                             'id' => $this->actorId,
+                             'func'=> $func,
+                             'arg'=> $args
+                         ]);
+
         return UnixClient::sendAndRecv($command, 3.0, $this->generateSocketByProcessIndex($processIndex));
     }
-    
-    private function broadcast(Command $command,$timeout = 3.0)
-    {
+
+    private function broadcast(Command $command,$timeout = 3.0) {
         $info = [];
-        $channel = new Channel($this->actorConfig->getActorProcessNum()+1);
-        for ($i = 1;$i <= $this->actorConfig->getActorProcessNum();$i++){
-            go(function ()use($command,$channel,$i,$timeout){
+        $channel = new Channel($this->actorProcessNum+1);
+        for ($i = 1; $i <= $this->actorProcessNum; $i++) {
+            go(function ()use($command,$channel,$i,$timeout) {
                 $ret = UnixClient::sendAndRecv($command,$timeout,$this->generateSocketByProcessIndex($i));
                 $channel->push([
-                   $i => $ret
-                ]);
-            });
+                                   $i => $ret
+                               ]);
+            }
+              );
         }
         $start = microtime(true);
-        while (1){
-            if(microtime(true) - $start > $timeout){
+        while (1) {
+            if (microtime(true) - $start > $timeout) {
                 break;
             }
             $temp = $channel->pop($timeout);
-            if(is_array($temp)){
+            if (is_array($temp)) {
                 $info += $temp;
-                if(count($info) == $this->actorConfig->getActorProcessNum()){
+                if (count($info) == $this->actorProcessNum) {
                     break;
                 }
             }
         }
-        
+
         return $info;
     }
-    
-    private function generateSocketByProcessIndex($processIndex):string
-    {
-        return $this->tempDir."/ActorProcess.{$this->serverName}.{$this->actorConfig->getActorName()}.{$processIndex}.sock";
+
+    private function generateSocketByProcessIndex($processIndex):string {
+        return $this->tempDir."/ActorProcess.".SERVER_NAME.".{$this->actorName}.{$processIndex}.sock";
     }
 
-    public static function actorIdToProcessIndex(string $actorId):int
-    {
-        $processIndex = ltrim(substr($actorId,0,3),'0');
-        if(empty($processIndex)){
-            return 0;
-        }else{
-            return $processIndex;
-        }
+    public static function actorIdToProcessIndex(string $actorId):int {
+        return intval(substr($actorId, 0, strpos($actorId, "0")));
     }
 }

@@ -6,8 +6,7 @@
  * Time: 12:14
  */
 
-class ActorConfig
-{
+class ActorConfig {
     protected $actorName;
     protected $actorProcessNum = 3;
     protected $maxActorNum = 10000;
@@ -21,8 +20,6 @@ class ActorConfig
      */
     protected $onShutdown;
 
-    protected $block = false;
-
     protected $tick = 0;
 
     protected $onTick;
@@ -32,13 +29,11 @@ class ActorConfig
     /**
      * @return mixed
      */
-    public function getActorName()
-    {
+    public function getActorName() {
         return $this->actorName;
     }
 
-    public function setActorName($actorName): ActorConfig
-    {
+    public function setActorName($actorName): ActorConfig {
         $this->actorName = $actorName;
         return $this;
     }
@@ -46,14 +41,12 @@ class ActorConfig
     /**
      * @return int
      */
-    public function getActorProcessNum(): int
-    {
+    public function getActorProcessNum(): int {
         return $this->actorProcessNum;
     }
 
 
-    public function setActorProcessNum(int $actorProcessNum): ActorConfig
-    {
+    public function setActorProcessNum(int $actorProcessNum): ActorConfig {
         $this->actorProcessNum = $actorProcessNum;
         return $this;
     }
@@ -61,14 +54,12 @@ class ActorConfig
     /**
      * @return int
      */
-    public function getMaxActorNum(): int
-    {
+    public function getMaxActorNum(): int {
         return $this->maxActorNum;
     }
 
 
-    public function setMaxActorNum(int $maxActorNum): ActorConfig
-    {
+    public function setMaxActorNum(int $maxActorNum): ActorConfig {
         $this->maxActorNum = $maxActorNum;
         return $this;
     }
@@ -76,112 +67,84 @@ class ActorConfig
     /**
      * @return int
      */
-    public function getBacklog(): int
-    {
+    public function getBacklog(): int {
         return $this->backlog;
     }
 
     /**
      * @param int $backlog
      */
-    public function setBacklog(int $backlog): void
-    {
+    public function setBacklog(int $backlog): void {
         $this->backlog = $backlog;
     }
 
     /**
      * @return callable
      */
-    public function getOnStart(): ?callable
-    {
+    public function getOnStart(): ?callable {
         return $this->onStart;
     }
 
     /**
      * @param callable $onStart
      */
-    public function setOnStart(?callable $onStart): void
-    {
+    public function setOnStart(?callable $onStart): void {
         $this->onStart = $onStart;
     }
 
     /**
      * @return callable
      */
-    public function getOnShutdown(): ?callable
-    {
+    public function getOnShutdown(): ?callable {
         return $this->onShutdown;
     }
 
     /**
      * @param callable $onShutdown
      */
-    public function setOnShutdown(?callable $onShutdown): void
-    {
+    public function setOnShutdown(?callable $onShutdown): void {
         $this->onShutdown = $onShutdown;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isBlock(): bool
-    {
-        return $this->block;
-    }
-
-    /**
-     * @param bool $block
-     */
-    public function setBlock(bool $block): void
-    {
-        $this->block = $block;
     }
 
     /**
      * @return int
      */
-    public function getTick(): int
-    {
+    public function getTick(): int {
         return $this->tick;
     }
 
     /**
      * @param int $tick
      */
-    public function setTick(int $tick): void
-    {
+    public function setTick(int $tick): void {
         $this->tick = $tick;
     }
 
     /**
      * @return mixed
      */
-    public function getOnTick()
-    {
+    public function getOnTick() {
         return $this->onTick;
     }
 
     /**
      * @param mixed $onTick
      */
-    public function setOnTick($onTick): void
-    {
+    public function setOnTick($onTick): void {
         $this->onTick = $onTick;
     }
 
     /**
      * @return mixed
      */
-    public function getProcessOnException()
-    {
+    public function getProcessOnException() {
         return $this->processOnException;
     }
 
     /**
      * @param mixed $processOnException
      */
-    public function setProcessOnException($processOnException): void
-    {
+    public function setProcessOnException($processOnException): void {
         $this->processOnException = $processOnException;
     }
 }

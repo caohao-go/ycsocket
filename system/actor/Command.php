@@ -5,40 +5,35 @@
  * Date: 2018-12-27
  * Time: 13:38
  */
-class Command
-{
+class Command {
     protected $command;
     protected $arg;
 
     /**
      * @return mixed
      */
-    public function getCommand()
-    {
+    public function getCommand() {
         return $this->command;
     }
 
     /**
      * @param mixed $command
      */
-    public function setCommand($command): void
-    {
+    public function setCommand($command): void {
         $this->command = $command;
     }
-    
+
     /**
      * @return mixed
      */
-    public function getArg()
-    {
+    public function getArg() {
         return $this->arg;
     }
 
     /**
      * @param mixed $arg
      */
-    public function setArg($arg): void
-    {
+    public function setArg($arg): void {
         $this->arg = $arg;
     }
 }

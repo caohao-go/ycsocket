@@ -4,29 +4,21 @@ header('Content-Type: text/html; charset=UTF-8');
 ini_set('display_errors', 'On');
 error_reporting(E_ERROR);
 
+define("SERVER_NAME", 'TT');
+
 define("APPPATH", realpath(dirname(__FILE__) . '/'));
 define("BASEPATH", APPPATH . '/system');
-define("APP_ROOT", APPPATH . '/application');
-
-//根据游戏不同区设置端口
-$zone_id = isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : 1;
-if ($zone_id <= 1) {
-    define('DABAOJIAN_ZONE_ID', 1);
-    $port = 9509;
-} else if ($zone_id == 2) {
-    define('DABAOJIAN_ZONE_ID', 2);
-    $port = 9510;
-}
+define("APPROOT", APPPATH . '/application');
 
 include(BASEPATH . "/Application.php");
 
 //创建WebSocket
-$ws = new swoole_websocket_server("0.0.0.0", $port,  SWOOLE_PROCESS, SWOOLE_SOCK_TCP | SWOOLE_SSL);
+$ws = new swoole_websocket_server("0.0.0.0", 9508,  SWOOLE_PROCESS, SWOOLE_SOCK_TCP | SWOOLE_SSL);
 
 $ws->set(array(
-        'daemonize' => false,	// 是否是守护进程
-        'worker_num' => 1,		//工作者进程数
-        'max_request' => 10000,	// 最大连接数量
+        'daemonize' => false,	//是否是守护进程
+        'worker_num' => 4,		//工作者进程数
+        'max_request' => 10000,	//最大连接数量
         'dispatch_mode' => 2,
         'debug_mode'=> 1,
         'ssl_key_file' => '/etc/nginx/ssl/game.fx4j.com/privkey.pem',
@@ -35,7 +27,9 @@ $ws->set(array(
         'heartbeat_idle_time' => 600,
 ));
 
-//work start
+Actor::getInstance()->attachToServer($ws);
+
+//监听WebSocket连接打开事件
 $ws->on('WorkerStart', function ($ws, $request) {
 	Userfd::getInstance($ws);
 });
@@ -50,18 +44,20 @@ $ws->on('message', function($ws, $frame) {
         $ws->push($frame->fd, time());
         return;
     }
-
+    
     $input = json_decode($frame->data, true);
+    
     if (empty($input) || empty($input['c']) || empty($input['m'])) { //输入格式错误
         $ws->push($frame->fd, json_encode(array("tagcode" => "1", "description" => "input error", "data" => $frame->data)));
     } else {
-        if (!empty($input['userid'])) { //绑定 userid 到 fd
+        if(!empty($input['userid'])) { //绑定 userid 到 fd
             $ws->bind($frame->fd, $input['userid']);
             Userfd::getInstance()->set($input['userid'], $frame->fd);
         }
-
+        
         $application = new Application($frame->fd);
-        $result = $application->run($input, $ws->getClientInfo($frame->fd));
+        
+        $result = $application->run($input, $ws->getClientInfo($frame->fd), $ws);
         unset($application);
 
         if ($result['send_user'] === 'all') {

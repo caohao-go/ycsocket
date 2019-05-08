@@ -14,11 +14,13 @@ class SuperController {
     protected $ip;
     protected $params;
     protected $loader;
+    protected $ws;
 
-    public function __construct($fd, & $params, $clientInfo) {
+    public function __construct($fd, & $params, $clientInfo, $ws) {
         $this->input_fd = $fd;
         $this->ip = $clientInfo['remote_ip'];
         $this->params = & $params;
+        $this->ws = & $ws;
 
         $this->loader = new Loader($this);
         $this->init();
@@ -29,6 +31,10 @@ class SuperController {
 
     public function & get_ip() {
         return $this->ip;
+    }
+    
+    public function & get_server() {
+        return $this->ws;
     }
 
     public function & get_params() {
@@ -73,14 +79,14 @@ class SuperController {
         $data["msg"] = $this->get_result_success($message);
         return $data;
     }
-
+    
     /**
     * json输出
     * @param array $data
     */
     protected function response_success_to_uid($uid, $message) {
         $data = array();
-
+        
         $data["send_user"] = array(Userfd::getInstance()->get($uid));
         $data["msg"] = $this->get_result_success($message);
         return $data;
