@@ -60,7 +60,9 @@ $ws->on('message', function($ws, $frame) {
         $result = $application->run($input, $ws->getClientInfo($frame->fd), $ws);
         unset($application);
 
-        if ($result['send_user'] === 'all') {
+        if (empty($result)) {
+        	//无返回
+        } else if ($result['send_user'] === 'all') {
             $start_fd = 0;
             while (true) {
                 //分批从 connection_list 函数获取现在连接中的fd，每轮100个
