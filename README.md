@@ -55,11 +55,9 @@ class ActorFactory
 
                 go(function ()use($array) {
                     $this->handlerMsg($array);
-                }
-                  );
+                });
             }
-        }
-          );
+        });
     }
 
     private function handlerMsg(array $array) {
