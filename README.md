@@ -43,27 +43,26 @@ function register_actor() {
 ```php
 class ActorFactory
 {
-	function __startUp()
-    {
+    function __startUp() {
         $this->channel = new Channel(64);
-		  $this->listen();
+        $this->listen();
     }
-    
-    private function listen()
-    {
+
+    private function listen() {
         go(function () {
             while (!$this->hasDoExit) {
                 $array = $this->channel->pop();
-                
-				    go(function ()use($array){
-					    $this->handlerMsg($array);
-				    });
+
+                go(function ()use($array) {
+                    $this->handlerMsg($array);
+                }
+                  );
             }
-        });
+        }
+          );
     }
-    
-    private function handlerMsg(array $array)
-    {
+
+    private function handlerMsg(array $array) {
         $msg = $array['msg'];
         if ($msg == 'destroy') {
             $reply = $this->exitHandler($array['arg']);
@@ -74,7 +73,7 @@ class ActorFactory
                 $reply = $throwable;
             }
         }
-        
+
         if ($array['reply']) {
             $conn = $array['connection'];
             $string = Protocol::pack(ActorFactory::pack($reply));
@@ -84,7 +83,7 @@ class ActorFactory
                     break;
                 }
             }
-			$conn->close();
+            $conn->close();
         }
     }
 }
@@ -93,12 +92,12 @@ class ActorFactory
 PkLogic::new 方法返回的并不是真正的Actor对象，而是一个ActorClient对象，我们可以通过该对象，来实现远程顺序调用Actor函数的目的，当然，这里的远程是指的跨进程，从业务进程到ActorProcess。
 ```php
 class RoomLogic extends ActorBean {
-	private $joiningRoom;
-	
-	public function joinRoom($userid, ... ) {
-		$this->joiningRoom['pkLogic'] = PkLogic::new();
-    	$this->joiningRoom['pkLogic']->joinUser($userid);
-      $this->joiningRoom['id'] = $this->joiningRoom['pkLogic']->getActorId();
+    private $joiningRoom;
+
+    public function joinRoom($userid, ... ) {
+        $this->joiningRoom['pkLogic'] = PkLogic::new();
+        $this->joiningRoom['pkLogic']->joinUser($userid);
+        $this->joiningRoom['id'] = $this->joiningRoom['pkLogic']->getActorId();
     }
 }
 ```
@@ -111,40 +110,36 @@ class ActorClient
     private $actorId;
     private $actorProcessNum;
 
-    function __construct(ActorConfig $config, string $tempDir)
-    {
+    function __construct(ActorConfig $config, string $tempDir) {
         $this->tempDir = $tempDir;
         $this->actorName = $config->getActorName();
         $this->actorProcessNum = $config->getActorProcessNum();
     }
-    
+
     function new($timeout, $arg);
-	
+
     function exist(string $actorId, $timeout = 3.0);
-    
+
     function destroy(...$arg);
-    
-    function __call($func, $args)
-    {
+
+    function __call($func, $args) {
         $processIndex = self::actorIdToProcessIndex($this->actorId);
         $command = new Command();
         $command->setCommand('call');
         $command->setArg([
-            'id' => $this->actorId,
-            'func'=> $func,
-            'arg'=> $args
-        ]);
-        
+                             'id' => $this->actorId,
+                             'func'=> $func,
+                             'arg'=> $args
+                         ]);
+
         return UnixClient::sendAndRecv($command, 3.0, $this->generateSocketByProcessIndex($processIndex));
     }
-    
-    private function generateSocketByProcessIndex($processIndex):string
-    {
+
+    private function generateSocketByProcessIndex($processIndex):string {
         return $this->tempDir."/ActorProcess.".SERVER_NAME.".{$this->actorName}.{$processIndex}.sock";
     }
 
-    public static function actorIdToProcessIndex(string $actorId):int
-    {
+    public static function actorIdToProcessIndex(string $actorId):int {
         return intval(substr($actorId, 0, strpos($actorId, "0")));
     }
 }
