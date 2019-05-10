@@ -90,7 +90,9 @@ $ws->on('message', function($ws, $frame) {
 //监听WebSocket连接关闭事件
 $ws->on('close', function ($ws, $fd) {
     $client_info = $ws->getClientInfo($fd);
-    Userfd::getInstance()->del($client_info['uid']);
+    $uid = $client_info['uid'];
+    Userfd::getInstance()->del($uid);
+    RoomLogic::getInstance()->proxyGame($uid);
 });
 
 echo "\n初始化成功\n\n";

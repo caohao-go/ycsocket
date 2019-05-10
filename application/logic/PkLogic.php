@@ -9,7 +9,6 @@
  * @author			caohao
  */
 class PkLogic extends ActorBean {
-    public static $i = 0;
     private $gameLogics = array();
 
     public function __construct() {
@@ -71,25 +70,6 @@ class PkLogic extends ActorBean {
     }
 
     public function printBoards() {
-        $boards = array();
-        foreach($this->gameLogics as $gameLogics) {
-            $boards[] = $gameLogics->getBoardsWithShape();
-        }
-
-        echo "--------------------|------------".PkLogic::$i++."--------|--------------------|--------------------|\n";
-        for ($i = 0; $i < 20; $i++) {
-            foreach($boards as $board) {
-                for ($j = 0; $j < 10; $j++) {
-                    if ($board[$i][$j] == 0) {
-                        echo "  ";
-                    } else {
-                        echo "* ";
-                    }
-                }
-                echo "|";
-            }
-            echo "\n";
-        }
-        echo "--------------------|--------------------|--------------------|--------------------|\n";
+        echo "======== printBoards ======\n";
     }
 }

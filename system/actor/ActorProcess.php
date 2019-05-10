@@ -252,4 +252,5 @@ class ActorProcess extends AbstractProcess {
     public function getConfig(): ProcessConfig {
         return $this->config;
     }
+
 }

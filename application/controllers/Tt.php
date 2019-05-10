@@ -13,27 +13,20 @@ class TtController extends SuperController {
 	
     public function joinAction() {
         $userId = intval($this->params['userid']);
-        $token = $this->params['token'];
                 
-        $joined = RoomLogic::getInstance()->isUserJoined($userId);
+        $joined = RoomLogic::getInstance()->isInRoom($userId);
         
         if(!empty($joined)) {
         	return $this->response_success_to_all(['data' => $joined]);
     	}
         
-        $joined = RoomLogic::getInstance()->joinRoom($userId, 'nickname', 'avatar');
-        $result = array();
-        $result['id'] = $joined['id'];
-        $result['state'] = GameLogic::STATE_JOIN;
-        $result['createTime'] = $joined['createTime'];
-        $result['users'] = array_values($joined['users']);
+        $ret = RoomLogic::getInstance()->joinRoom($userId);
         
-        return $this->response_success_to_all(['data' => $result]);
+        return $this->response_success_to_all(['data' => $ret]);
     }
-    
+
     public function cmdAction() {
         $userId = intval($this->params['userid']);
-        $token = $this->params['token'];
         $pkid = intval($this->params['pkid']);
         $cmd = $this->params['cmd'];
         
