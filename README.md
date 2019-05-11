@@ -94,7 +94,9 @@ class RoomLogic extends ActorBean {
     ...
 }
 ```
-   PkLogic::new方法会通过unixsocket发送新建请求到一个特殊的进程(ActorProcess)，该进程会通过工厂类(ActorFactory)创建真实的Actor对象，即RoomLogic、 PkLogic、 GameLogic，其他进程可以通过 unixsocket 访问该对象。同时创建一个信箱(channel)，并监听信箱，一旦有请求，将会开启一个协程处理消息，该消息必定会被顺序执行，但是切记在处理逻辑中不要出现阻塞方法，否则效率会非常低下，处理主要包含2种，一种是销毁Actor， 一种是调用实际的Actor方法，即RoomLogic，PkLogic，GameLogic的方法。
+   PkLogic::new方法会通过协程版 unix domain socket 发送新建请求到一个特殊的进程(ActorProcess)，该进程会通过工厂类(ActorFactory)创建真实的Actor对象，即RoomLogic、 PkLogic、 GameLogic，其他进程可以通过 unixsocket 访问该对象。同时创建一个信箱(channel)，并监听信箱，一旦有请求，将会开启一个协程处理消息，该消息必定会被顺序执行，但是切记在处理逻辑中不要出现阻塞方法，否则效率会非常低下，
+   如果该消息是销毁Actor，工厂会删除真实的Actor对象，并在ActorProcess进程里销毁该工厂。除此之外，就是通过 call_user_func 调用真实Actor对象的成员函数。
+   
 ```php
 class ActorFactory
 {
