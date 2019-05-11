@@ -70,7 +70,7 @@ class PkLogic extends ActorBean {
 
     function onDestroy() {
         foreach($this->gameLogics as $gameLogics) {
-            $gameLogics->exist();
+            $gameLogics->destroy();
         }
     }
 
