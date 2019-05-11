@@ -25,7 +25,12 @@ swoole
    
    使用共享数据方式的并发编程面临的最大的一个问题就是数据条件竞争（data race）。处理各种锁的问题是让人十分头痛的一件事，锁限制了并发性, 调用者线程阻塞带来的浪费，用的不好，还会造成死锁
    
-   和共享数据方式相比，消息传递机制最大的优点就是不会产生数据竞争状态（data race）。实现消息传递有两种常见的类型：基于channel的消息传递和基于Actor的消息传递。
+   和共享数据方式相比，消息传递机制最大的优点就是不会产生数据竞争状态（data race）。实现消息传递有两种常见的类型：基于channel的消息传递和基于Actor的消息传递，除此之外，还有如下一些优点：
+   
+- 事件模型驱动--Actor之间的通信是异步的，即使Actor在发送消息后也无需阻塞或者等待就能够处理其他事情
+- 强隔离性--Actor中的方法不能由外部直接调用，所有的一切都通过消息传递进行的，从而避免了Actor之间的数据共享，想要观察到另一个Actor的状态变化只能通过消息传递进行询问
+- 位置透明--无论Actor地址是在本地还是在远程机上对于代码来说都是一样的
+- 轻量性--Actor是非常轻量的计算单机，单个Actor仅包含一个 actorId 和 channel 对象，只需少量内存就能达到高并发
    
    本代码Actor模型主要基于swoole协程的channel来实现，进程间通过协程版 unix domain socket 进行通信，当然Actor不仅仅局限于单个节点上，也可以作为分布式集群运行。
    
@@ -52,7 +57,9 @@ function register_actor() {
 	Actor::getInstance()->register(GameLogic::class, 1);
 }
 ```
-   每个Actor都是一个独立维护自身数据的个体，依附于一个特殊的进程ActorProcess，拥有一个唯一的id，所有进程对Actor的访问，都是通过该id来实现，所有Actor在使用之前都需要注册，注册主要是初始化Actor名称、进程数、启动回调函数、销毁回调函数、定时任务等信息。
+   每一个Actor对于其他的Actor来说都是封闭的, 他们之间通过信箱(channel)来联系, 每个Actor拥有自己的变量,依附于一个特殊的进程ActorProcess，也就是说Actor本身是进程安全的，
+   
+   每个Actor拥有一个唯一的id，所有进程对Actor的访问，都是通过该id来确定Actor的位置，然后发送消息调用Actor函数，所有Actor在使用之前都需要注册，注册主要是初始化Actor名称、进程数、启动回调函数、销毁回调函数、定时任务等信息。
 
    在注册完成之后，我们将为每个Actor都创建对应的依附进程。并将进程挂到 swoole 服务器下。
    
@@ -155,7 +162,7 @@ class ActorFactory
 ```
 
 ### Actor 行为
-PkLogic::new 方法返回的并不是真实的Actor对象，而是一个ActorClient对象，我们可以通过该对象，来实现远程顺序调用真实Actor成员函数的目的，当然，这里的远程是指的跨进程，从业务进程到ActorProcess，如果扩展到分布式集群环境下，这里可以是集群中节点。
+PkLogic::new 方法返回的并不是真实的Actor对象，而是一个ActorClient对象，我们可以通过ActorClient来实现远程顺序调用真实Actor成员函数的目的，当然，这里的远程是指的跨进程，从业务进程到ActorProcess，如果扩展到分布式集群环境下，这里可以是集群中节点。
 ```php
 class RoomLogic extends ActorBean {
     private $joiningRoom;
