@@ -85,7 +85,7 @@ class ActorBean {
     function getActorId();
 }
 ```
-```
+```php
 //RoomLogic.php 单例
 class RoomLogic extends ActorBean {
     private static $instance;
