@@ -21,27 +21,27 @@ swoole
 加入Actor模型，基于unixsocket 和 channel 的高并发模型
 
 # Actor 模型
-    在高并发环境中，为了保证多个进程同时访问一个对象时的数据安全，我们通常采用两种策略，共享数据和消息传递，
+   在高并发环境中，为了保证多个进程同时访问一个对象时的数据安全，我们通常采用两种策略，共享数据和消息传递，
    
-    使用共享数据方式的并发编程面临的最大的一个问题就是数据条件竞争（data race）。处理各种锁的问题是让人十分头痛的一件事，锁限制了并发性, 调用者线程阻塞带来的浪费，用的不好，还会造成死锁
+   使用共享数据方式的并发编程面临的最大的一个问题就是数据条件竞争（data race）。处理各种锁的问题是让人十分头痛的一件事，锁限制了并发性, 调用者线程阻塞带来的浪费，用的不好，还会造成死锁
    
-    和共享数据方式相比，消息传递机制最大的优点就是不会产生数据竞争状态（data race）。实现消息传递有两种常见的类型：基于channel的消息传递和基于Actor的消息传递。
+   和共享数据方式相比，消息传递机制最大的优点就是不会产生数据竞争状态（data race）。实现消息传递有两种常见的类型：基于channel的消息传递和基于Actor的消息传递。
    
-    本代码Actor模型主要基于swoole协程的channel来实现，进程间通过协程版 unix domain socket 进行通信
+   本代码Actor模型主要基于swoole协程的channel来实现，进程间通过协程版 unix domain socket 进行通信。
    
 ## 基本原理
-    Actor模型=数据+行为+消息
+   Actor模型=数据+行为+消息
    
-    Actor模型内部的状态由它自己维护即它内部数据只能由它自己修改(通过消息传递来进行状态修改)，所以使用Actors模型进行并发编程可以很好地避免这些问题，Actor由状态(state)、行为(Behavior)和邮箱(mailBox)三部分组成
+   Actor模型内部的状态由它自己维护即它内部数据只能由它自己修改(通过消息传递来进行状态修改)，所以使用Actors模型进行并发编程可以很好地避免这些问题，Actor由状态(state)、行为(Behavior)和邮箱(mailBox)三部分组成
 
 - 状态(state)：Actor中的状态指的是Actor对象的变量信息，状态由Actor自己管理，避免了并发环境下的锁和内存原子性等问题
 - 行为(Behavior)：行为指定的是Actor中计算逻辑，通过Actor接收到消息来改变Actor的状态
 - 邮箱(mailBox)：邮箱是Actor和Actor之间的通信桥梁，邮箱内部通过FIFO消息队列来存储发送方Actor消息，接受方Actor从邮箱队列中获取消息
 
-Actor的基础就是消息传递
+   Actor的基础就是消息传递
    
-## 代码剖析
-    我们框架中的示例代码，是一个多人竞技的游戏服务器，代码中有3个Actor: RoomLogic、PkLogic、GameLogic，分别用于存储所有房间、单个房间逻辑、房间内每个玩家的游戏逻辑，当然还有一个非Actor类AiLogic，用于处理AI玩家逻辑，代码存在于 application/logic 目录中。
+## 示例代码剖析
+   我们框架中的示例代码，是一个多人竞技的游戏服务器，代码中有3个 Actor : RoomLogic 、 PkLogic 、 GameLogic，分别用于存储所有房间、单个房间逻辑、房间内每个玩家的游戏逻辑，还有一个非 Actor 类 AiLogic ，用于处理AI玩家逻辑，代码都存在于 application/logic 目录中。
 
 #### Actor的注册：
 ```php
@@ -52,9 +52,49 @@ function register_actor() {
 	Actor::getInstance()->register(GameLogic::class, 1);
 }
 ```
-    每个Actor都是一个独立维护自身数据的个体，拥有一个唯一的id，他们本质上是一个类，继承自ActorBean，该父类拥有一些操作这些类对象的方法，比如创建Actor对象的new静态方法。创建后的Actor对象依附在一个特殊的进程 ActorProcess 中，业务进程可以通过 unixsocket 访问该对象。
+   每个Actor都是一个独立维护自身数据的个体，拥有一个唯一的id，所有进程对Actor的访问，都是通过该id来实现，所有Actor在使用之前都需要注册，他们本质上是一个类，继承自ActorBean，该父类拥有一些操作这些类对象的方法，比如创建Actor对象的new静态方法。该方法会通过unixsocket发送新建请求到一个特殊的进程(ActorProcess)，该进程会通过工厂类(ActorFactory)创建真实的Actor对象，即RoomLogic、 PkLogic、 GameLogic，其他进程可以通过 unixsocket 访问该对象。
+```php
+//ActorBean.php
+class ActorBean {
+    protected $actorId;
+    
+    public static function new(...$args);
+    public static function getBean(string $actorId);
+    public function exist();
+    public function bean();
+    function onDestroy(...$arg);
+    function getThis();
+    function setActorId($actorId);
+    function getActorId();
+}
+```
+```
+//RoomLogic.php 单例
+class RoomLogic extends ActorBean {
+    private static $instance;
 
-    如果 PkLogic::new 将在 ActorProcess 进程创建一个ActorFactory对象，该对象拥有Actor的指针，例如RoomLogic，PkLogic，GameLogic，并创建一个信道channel，并监听信道，一旦有请求，将会开启一个协程处理消息，该消息必定会被顺序执行，但是切记在处理逻辑中不要出现阻塞方法，否则效率会非常低下，处理主要包含2种，一种是销毁Actor， 一种是调用实际的Actor方法，即RoomLogic，PkLogic，GameLogic的方法。
+    public function __construct() {
+    }
+
+    public static function getInstance() {
+        if (!isset(self::$instance)) {
+            global $roomActorId; //用一个全局变量存储RoomLogic 的 ActorId
+            $actorIdArray = $roomActorId->get("RoomActorId");
+            if (empty($actorIdArray['id'])) {
+                self::$instance = RoomLogic::new();
+                $roomActorId->set("RoomActorId", ['id' => self::$instance->getActorId()]);
+            } else {
+                self::$instance = RoomLogic::getBean($actorIdArray['id']);
+            }
+        }
+
+        return self::$instance;
+    }
+    ...
+}
+```
+
+   如果 PkLogic::new 将在 ActorProcess 进程创建一个ActorFactory对象，该对象拥有Actor的指针，例如RoomLogic，PkLogic，GameLogic，并创建一个信道channel，并监听信道，一旦有请求，将会开启一个协程处理消息，该消息必定会被顺序执行，但是切记在处理逻辑中不要出现阻塞方法，否则效率会非常低下，处理主要包含2种，一种是销毁Actor， 一种是调用实际的Actor方法，即RoomLogic，PkLogic，GameLogic的方法。
 ```php
 class ActorFactory
 {
