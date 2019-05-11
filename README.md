@@ -27,7 +27,7 @@ swoole
    
    和共享数据方式相比，消息传递机制最大的优点就是不会产生数据竞争状态（data race）。实现消息传递有两种常见的类型：基于channel的消息传递和基于Actor的消息传递。
    
-   本代码Actor模型主要基于swoole协程的channel来实现，进程间通过协程版 unix domain socket 进行通信。
+   本代码Actor模型主要基于swoole协程的channel来实现，进程间通过协程版 unix domain socket 进行通信，当然Actor不仅仅局限于单个节点上，也可以作为分布式集群运行。
    
 ## 基本原理
    Actor模型=数据+行为+消息
