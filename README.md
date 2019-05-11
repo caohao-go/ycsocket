@@ -155,7 +155,7 @@ class ActorFactory
 ```
 
 ### Actor 行为
-PkLogic::new 方法返回的并不是真实的Actor对象，而是一个ActorClient对象，我们可以通过该对象，来实现远程顺序调用Actor函数的目的，当然，这里的远程是指的跨进程，从业务进程到ActorProcess。
+PkLogic::new 方法返回的并不是真实的Actor对象，而是一个ActorClient对象，我们可以通过该对象，来实现远程顺序调用真实Actor成员函数的目的，当然，这里的远程是指的跨进程，从业务进程到ActorProcess。
 ```php
 class RoomLogic extends ActorBean {
     private $joiningRoom;
@@ -211,7 +211,28 @@ class ActorClient
 }
 ```
    
-   
+### Actor的销毁
+```php
+class RoomLogic extends ActorBean {
+    private $playingRooms;
+    
+    public function existRoom($pkid) {
+        $this->playingRooms[$pkid]['pkLogic']->exist();
+        unset($this->playingRooms[$pkid]);
+    }
+}
+
+
+class PkLogic extends ActorBean {
+    private $gameLogics = array();
+
+    function onDestroy() {
+        foreach($this->gameLogics as $gameLogics) {
+            $gameLogics->exist();
+        }
+    }
+}
+```
    
    
    
