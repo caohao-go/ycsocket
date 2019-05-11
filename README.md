@@ -155,7 +155,7 @@ class ActorFactory
 ```
 
 ### Actor 行为
-PkLogic::new 方法返回的并不是真实的Actor对象，而是一个ActorClient对象，我们可以通过该对象，来实现远程顺序调用真实Actor成员函数的目的，当然，这里的远程是指的跨进程，从业务进程到ActorProcess。
+PkLogic::new 方法返回的并不是真实的Actor对象，而是一个ActorClient对象，我们可以通过该对象，来实现远程顺序调用真实Actor成员函数的目的，当然，这里的远程是指的跨进程，从业务进程到ActorProcess，如果扩展到分布式集群环境下，这里可以是集群中节点。
 ```php
 class RoomLogic extends ActorBean {
     private $joiningRoom;
