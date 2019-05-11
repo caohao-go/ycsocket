@@ -52,8 +52,15 @@ function register_actor() {
 	Actor::getInstance()->register(GameLogic::class, 1);
 }
 ```
-   每个Actor都是一个独立维护自身数据的个体，拥有一个唯一的id，所有进程对Actor的访问，都是通过该id来实现，所有Actor在使用之前都需要注册。
+   每个Actor都是一个独立维护自身数据的个体，依附于一个特殊的进程ActorProcess，拥有一个唯一的id，所有进程对Actor的访问，都是通过该id来实现，所有Actor在使用之前都需要注册，注册主要是初始化Actor名称、进程数、启动回调函数、销毁回调函数、定时任务等信息。
 
+   在注册完成之后，我们将为每个Actor都创建对应的依附进程。并将进程挂到 swoole 服务器下。
+   
+```php
+$ws = new swoole_server("0.0.0.0", 9508,  SWOOLE_PROCESS, SWOOLE_SOCK_TCP | SWOOLE_SSL);
+Actor::getInstance()->attachToServer($ws);
+```
+   
 ### Actor的创建与信箱的监听
    Actor本质上是一个类，所有Actor都继承自ActorBean，该父类保存每个Actor的唯一编号actorId，和一些操作这些Actor对象的方法，比如创建Actor对象的new静态方法。
    
@@ -148,7 +155,7 @@ class ActorFactory
 ```
 
 ### Actor 行为
-PkLogic::new 方法返回的并不是真正的Actor对象，而是一个ActorClient对象，我们可以通过该对象，来实现远程顺序调用Actor函数的目的，当然，这里的远程是指的跨进程，从业务进程到ActorProcess。
+PkLogic::new 方法返回的并不是真实的Actor对象，而是一个ActorClient对象，我们可以通过该对象，来实现远程顺序调用Actor函数的目的，当然，这里的远程是指的跨进程，从业务进程到ActorProcess。
 ```php
 class RoomLogic extends ActorBean {
     private $joiningRoom;
