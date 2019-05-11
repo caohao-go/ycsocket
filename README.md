@@ -110,7 +110,7 @@ class RoomLogic extends ActorBean {
     ...
 }
 ```
-   PkLogic::new方法会通过协程版 unix domain socket 发送新建请求到ActorProcess，该进程会通过工厂类(ActorFactory)创建真实的Actor对象，即RoomLogic、 PkLogic、 GameLogic，同时创建一个信箱(channel)，并监听信箱，一旦有请求，将会开启一个协程处理消息，该消息必定会被顺序执行，但是切记在处理逻辑中不要出现阻塞方法，否则效率会非常低下，其他进程可以通过 unixsocket 往该进程的信箱push消息来访问Actor对象。
+   PkLogic::new方法会通过协程版 unix domain socket 发送新建请求到ActorProcess，该进程会通过工厂类(ActorFactory)创建真实的Actor对象，即RoomLogic、 PkLogic、 GameLogic对象，同时在 startUp 函数里，创建一个信箱(channel)，并创建一个协程来监听信箱，一旦有请求，将会开启一个协程处理消息，该消息必定会被顺序依次处理，但是切记在处理逻辑中不要出现阻塞IO，否则效率会非常低下，
    如果消息是销毁Actor，工厂会删除真实的Actor对象，并在ActorProcess进程里销毁该工厂。还有就是通过 call_user_func 调用真实Actor对象的成员函数。
    
 ```php
@@ -167,7 +167,8 @@ class ActorFactory
 ```
 
 ### Actor 行为
-PkLogic::new 方法返回的并不是真实的Actor对象，而是一个ActorClient对象，我们可以通过ActorClient来实现远程顺序调用真实Actor成员函数的目的，当然，这里的远程是指的跨进程，从业务进程到ActorProcess，如果扩展到分布式集群环境下，这里可以是集群中节点。
+PkLogic::new 方法返回的并不是真实的Actor对象，而是一个ActorClient，我们可以通过ActorClient来实现远程顺序调用真实Actor成员函数的目的，当然，这里的远程是指的跨进程，从业务进程到ActorProcess，如果扩展到分布式集群环境下，这里可以是集群中节点。
+
 ```php
 class RoomLogic extends ActorBean {
     private $joiningRoom;
@@ -194,7 +195,7 @@ class PkLogic extends ActorBean {
 }
 ```
 
-上面创建通过 PkLogic::new 创建Actor对象后，调用joinUser方法，由于 PkLogic::new() 返回的是 ActorClient 对象，然后ActorClient并没有 joinUser 方法，那么他会调用 ActorClient 的魔术方法，该魔术方法会将请求通过unixsocket传到 ActorProcess 进程，并push到ActorFactory的信道，然后由ActorFactory从信道获取数据，并实现真正的函数调用，并返回结果。
+上面创建通过 PkLogic::new 创建Actor对象后，调用joinUser方法，由于 PkLogic::new() 返回的是 ActorClient 对象，然后ActorClient并没有 joinUser 方法，那么他会调用 \_\_call 魔术方法，该魔术方法会将请求通过 unixsocket 传到 ActorProcess 进程，并在该进程被 push 到ActorFactory 的信箱(channel)，ActorFactory 的监听协程会从信箱 pop 数据，并实现真正的函数调用，并返回结果。
 ```php
 class ActorClient
 {
@@ -239,12 +240,56 @@ class ActorClient
 ```
    
 ### Actor的销毁
+ActorClient有个 destroy 方法，用于销毁Actor。
+```php
+class ActorClient {
+    private $actorId;
+    
+    function destroy(...$arg) {
+        $processIndex = self::actorIdToProcessIndex($this->actorId);
+        $command = new Command();
+        $command->setCommand('destroy');
+        $command->setArg([
+                             'id' => $this->actorId,
+                             'arg' => $arg
+                         ]);
+
+        return UnixClient::sendAndRecv($command, 3.0, $this->generateSocketByProcessIndex($processIndex));
+    }
+}
+
+class ActorFactory {
+    private function exitHandler($arg) {
+        $reply = null;
+
+        try {
+            //清理定时器
+            foreach ($this->tickList as $tickId) {
+                swoole_timer_clear($tickId);
+            }
+
+            $this->hasDoExit = true;
+            $this->channel->close();
+
+            $reply = $this->realActor->onDestroy(...$arg);
+            if ($reply === null) {
+                $reply = true;
+            }
+        } catch (\Throwable $throwable) {
+            $reply = $throwable;
+        }
+
+        return $reply;
+    }
+}
+```
+Actor的销毁也是将消息destroy消息发送到ActorProcess，然后由工厂类做一些清理工作，最后删除真实的Actor对象，在delele之前，会调用真实Actor的onDestroy方法，这个函数在父类ActorBean是一个空函数，用户可以重写该函数以便加入自己的清理逻辑，例如下面的PkLogic在onDestroy方法里面，将销毁GameLogic对象来清理房间内所有玩家的游戏数据。
 ```php
 class RoomLogic extends ActorBean {
     private $playingRooms;
     
-    public function existRoom($pkid) {
-        $this->playingRooms[$pkid]['pkLogic']->exist();
+    public function exitRoom($pkid) {
+        $this->playingRooms[$pkid]['pkLogic']->destroy();
         unset($this->playingRooms[$pkid]);
     }
 }
@@ -255,7 +300,7 @@ class PkLogic extends ActorBean {
 
     function onDestroy() {
         foreach($this->gameLogics as $gameLogics) {
-            $gameLogics->exist();
+            $gameLogics->destroy();
         }
     }
 }
