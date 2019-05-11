@@ -30,6 +30,8 @@ swoole
    本代码Actor模型主要基于swoole协程的channel来实现，进程间通过协程版 unix domain socket 进行通信
    
 ## 基本原理
+    Actor模型=数据+行为+消息
+   
    Actor模型内部的状态由它自己维护即它内部数据只能由它自己修改(通过消息传递来进行状态修改)，所以使用Actors模型进行并发编程可以很好地避免这些问题，Actor由状态(state)、行为(Behavior)和邮箱(mailBox)三部分组成
 
 - 状态(state)：Actor中的状态指的是Actor对象的变量信息，状态由Actor自己管理，避免了并发环境下的锁和内存原子性等问题
