@@ -44,8 +44,7 @@ class PkLogic extends ActorBean {
         foreach($this->gameLogics as $gameLogics) {
             go(function () use ($gameLogics) {
                 $gameLogics->startGame();
-            }
-              );
+            });
         }
     }
 
@@ -67,6 +66,12 @@ class PkLogic extends ActorBean {
 
     public function setGameProxy($uid, $proxy) {
         $this->gameLogics[$uid]->setProxy($proxy);
+    }
+
+    function onDestroy() {
+        foreach($this->gameLogics as $gameLogics) {
+            $gameLogics->exist();
+        }
     }
 
     public function printBoards() {

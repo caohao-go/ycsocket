@@ -118,6 +118,11 @@ class RoomLogic extends ActorBean {
         return $ret;
     }
 
+    public function existRoom($pkid) {
+        $this->playingRooms[$pkid]['pkLogic']->exist();
+        unset($this->playingRooms[$pkid]);
+    }
+
     public function proxyGame($userid) {
         if (!isset($this->joinedUser[$userid])) {
             return;
