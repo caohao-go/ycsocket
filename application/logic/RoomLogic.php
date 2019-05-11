@@ -118,8 +118,8 @@ class RoomLogic extends ActorBean {
         return $ret;
     }
 
-    public function existRoom($pkid) {
-        $this->playingRooms[$pkid]['pkLogic']->exist();
+    public function exitRoom($pkid) {
+        $this->playingRooms[$pkid]['pkLogic']->destroy();
         unset($this->playingRooms[$pkid]);
     }
 
