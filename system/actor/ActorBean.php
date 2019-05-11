@@ -16,8 +16,8 @@ class ActorBean {
         return Actor::getInstance()->actorCreate(static::class, $args);
     }
 
-    public static function exist(string $actorId, $timeout = 3.0) {
-        return Actor::getInstance()->actorExist(static::class, $actorId, $timeout);
+    public function exist() {
+        return Actor::getInstance()->actorExist(static::class, $this->actorId, 3.0);
     }
 
     public static function getBean(string $actorId) {
