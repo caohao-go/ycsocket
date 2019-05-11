@@ -52,7 +52,8 @@ function register_actor() {
 	Actor::getInstance()->register(GameLogic::class, 1);
 }
 ```
-   每个Actor都是一个独立维护自身数据的个体，拥有一个唯一的id，所有进程对Actor的访问，都是通过该id来实现，所有Actor在使用之前都需要注册，他们本质上是一个类，继承自ActorBean，该父类拥有一些操作这些类对象的方法，比如创建Actor对象的new静态方法。该方法会通过unixsocket发送新建请求到一个特殊的进程(ActorProcess)，该进程会通过工厂类(ActorFactory)创建真实的Actor对象，即RoomLogic、 PkLogic、 GameLogic，其他进程可以通过 unixsocket 访问该对象。
+   每个Actor都是一个独立维护自身数据的个体，拥有一个唯一的id，所有进程对Actor的访问，都是通过该id来实现，所有Actor在使用之前都需要注册，他们本质上是一个类，继承自ActorBean，该父类拥有一些操作这些类对象的方法，比如创建Actor对象的new静态方法。
+   
 ```php
 //ActorBean.php
 class ActorBean {
@@ -78,7 +79,7 @@ class RoomLogic extends ActorBean {
 
     public static function getInstance() {
         if (!isset(self::$instance)) {
-            global $roomActorId; //用一个全局变量存储RoomLogic 的 ActorId
+            global $roomActorId; //通过一个全局变量在共享内存中存储 RoomLogic 的 ActorId
             $actorIdArray = $roomActorId->get("RoomActorId");
             if (empty($actorIdArray['id'])) {
                 self::$instance = RoomLogic::new();
@@ -93,8 +94,7 @@ class RoomLogic extends ActorBean {
     ...
 }
 ```
-
-   如果 PkLogic::new 将在 ActorProcess 进程创建一个ActorFactory对象，该对象拥有Actor的指针，例如RoomLogic，PkLogic，GameLogic，并创建一个信道channel，并监听信道，一旦有请求，将会开启一个协程处理消息，该消息必定会被顺序执行，但是切记在处理逻辑中不要出现阻塞方法，否则效率会非常低下，处理主要包含2种，一种是销毁Actor， 一种是调用实际的Actor方法，即RoomLogic，PkLogic，GameLogic的方法。
+   PkLogic::new方法会通过unixsocket发送新建请求到一个特殊的进程(ActorProcess)，该进程会通过工厂类(ActorFactory)创建真实的Actor对象，即RoomLogic、 PkLogic、 GameLogic，其他进程可以通过 unixsocket 访问该对象。同时创建一个信箱(channel)，并监听信箱，一旦有请求，将会开启一个协程处理消息，该消息必定会被顺序执行，但是切记在处理逻辑中不要出现阻塞方法，否则效率会非常低下，处理主要包含2种，一种是销毁Actor， 一种是调用实际的Actor方法，即RoomLogic，PkLogic，GameLogic的方法。
 ```php
 class ActorFactory
 {
