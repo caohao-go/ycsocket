@@ -166,7 +166,22 @@ class RoomLogic extends ActorBean {
         $this->joiningRoom['id'] = $this->joiningRoom['pkLogic']->getActorId();
     }
 }
+
+class PkLogic extends ActorBean {
+    private $gameLogics = array();
+
+    public function __construct() {
+    }
+
+    public function joinUser($uid) {
+        $this->gameLogics[$uid] = GameLogic::new($this->actorId, $uid);
+        $this->gameLogics[$uid]->createGame();
+
+        return count($this->gameLogics);
+    }
+}
 ```
+
 上面创建通过 PkLogic::new 创建Actor对象后，调用joinUser方法，由于 PkLogic::new() 返回的是 ActorClient 对象，然后ActorClient并没有 joinUser 方法，那么他会调用 ActorClient 的魔术方法，该魔术方法会将请求通过unixsocket传到 ActorProcess 进程，并push到ActorFactory的信道，然后由ActorFactory从信道获取数据，并实现真正的函数调用，并返回结果。
 ```php
 class ActorClient
@@ -233,10 +248,6 @@ class PkLogic extends ActorBean {
     }
 }
 ```
-   
-   
-   
-   
-   
+
    
    
