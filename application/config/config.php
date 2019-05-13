@@ -9,11 +9,4 @@ $config['zone_info'] = [
     ['zone_id' => 4, 'zone_name' => '四区', 'hequ' => 0, 'hot' => '新服', 'status' => 1, 'socket' => 'wss4', 'port' => 9507, 'time' => '2019-01-16 10点'],
 ];
 
-$config['source_zone'] = [
-    1 => 1,
-    2 => 1,
-    3 => 1,
-    4 => 0,
-];
-
 return $config;
