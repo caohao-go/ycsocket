@@ -54,11 +54,11 @@ class ActorFactory {
     }
 
     public static function pack($data) {
-        return base64_encode(\swoole_serialize::pack($data));
+        return base64_encode(serialize($data));
     }
 
     public static function unpack($data) {
-        return \swoole_serialize::unpack(base64_decode($data));
+        return unserialize(base64_decode($data));
     }
 
     function actorId() {
