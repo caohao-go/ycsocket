@@ -18,7 +18,8 @@ swoole
 
 支持共享内存 entity ,可以支持超时更新内容
 
-加入Actor模型，基于unixsocket 和 channel 的高并发模型
+加入Actor模型，基于unixsocket 和 channel 的高并发模型。
+本框架 Actor 模型借鉴自 https://github.com/easy-swoole/actor ，做了些修改后融入 Actor
 
 # Actor 模型
    在高并发环境中，为了保证多个进程同时访问一个对象时的数据安全，我们通常采用两种策略，共享数据和消息传递，
