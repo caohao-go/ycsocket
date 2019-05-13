@@ -6,8 +6,10 @@
  * Time: 12:10
  */
 
+namespace EasySwoole\Actor;
+
 class Actor {
-    use Singleton;
+    use \Singleton;
 
     protected $actorList = [];
     private $tempDir;

@@ -6,6 +6,8 @@
  * Time: 01:41
  */
 
+namespace EasySwoole\Actor;
+
 use Swoole\Process;
 
 abstract class AbstractProcess {
@@ -66,7 +68,7 @@ abstract class AbstractProcess {
             $process->name($this->getProcessName());
         }
 
-        Userfd::getInstance($this->ws);
+        \Userfd::getInstance($this->ws);
 
         Process::signal(SIGTERM,function ()use($process) {
             go(function ()use($process) {
