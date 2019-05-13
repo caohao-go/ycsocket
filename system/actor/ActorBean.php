@@ -6,6 +6,8 @@
  * Time: 12:10
  */
 
+namespace EasySwoole\Actor;
+
 class ActorBean {
     protected $actorId;
 
