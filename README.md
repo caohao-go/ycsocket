@@ -1,7 +1,7 @@
 # ycsocket
 基于 swoole 和 swoole_orm 的 websocket 框架，各位可以自己扩展到 TCP/UDP，HTTP。
 
-在ycsocket 中，采用的是全协程化，全池化的数据库、缓存IO，对于IO密集型型的应用，能够支撑较高并发。
+在ycsocket 中，采用的是全协程化，全池化的数据库、缓存IO，对于IO密集型的应用，能够支撑较高并发。
 
 环境：
 PHP7+
