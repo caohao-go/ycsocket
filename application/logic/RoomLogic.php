@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+use EasySwoole\Actor\ActorBean;
 use Swoole\Coroutine\Channel;
 
 /**
