@@ -5,6 +5,9 @@
  * Date: 2018-12-27
  * Time: 13:38
  */
+
+namespace EasySwoole\Actor;
+
 class Protocol {
     public static function pack(string $data): string {
         return pack('N', strlen($data)).$data;

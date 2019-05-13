@@ -5,6 +5,9 @@
  * Date: 2018-12-27
  * Time: 14:17
  */
+ 
+namespace EasySwoole\Actor;
+
 use Swoole\Coroutine\Client;
 
 class UnixClient {

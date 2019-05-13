@@ -6,8 +6,10 @@
  * Time: 11:39
  */
 
+namespace EasySwoole\Actor;
+
 class Timer {
-    use Singleton;
+    use \Singleton;
 
     protected $timerList = [];
     protected $timerMap = [];

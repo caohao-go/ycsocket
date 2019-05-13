@@ -6,6 +6,8 @@
  * Time: 12:13
  */
 
+namespace EasySwoole\Actor;
+
 use Swoole\Coroutine\Channel;
 
 class ActorFactory {
@@ -52,11 +54,11 @@ class ActorFactory {
     }
 
     public static function pack($data) {
-        return base64_encode(swoole_serialize::pack($data));
+        return base64_encode(\swoole_serialize::pack($data));
     }
 
     public static function unpack($data) {
-        return swoole_serialize::unpack(base64_decode($data));
+        return \swoole_serialize::unpack(base64_decode($data));
     }
 
     function actorId() {

@@ -57,7 +57,7 @@ class SuperController {
         $data = array('c' => $this->params['c'], 'm' => $this->params['m'], "code" => $code, "msg" => $message);
         return json_encode($data);
     }
-
+    
     /**
     * json输出
     * @param array $data

@@ -5,6 +5,8 @@
  * Date: 2018-12-27
  * Time: 12:14
  */
+ 
+namespace EasySwoole\Actor;
 
 class ActorConfig {
     protected $actorName;

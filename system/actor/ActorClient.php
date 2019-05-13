@@ -6,6 +6,8 @@
  * Time: 13:57
  */
 
+namespace EasySwoole\Actor;
+
 use Swoole\Coroutine\Channel;
 
 class ActorClient {

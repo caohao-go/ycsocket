@@ -5,6 +5,9 @@
  * Date: 2018-12-27
  * Time: 13:38
  */
+ 
+namespace EasySwoole\Actor;
+ 
 class Command {
     protected $command;
     protected $arg;

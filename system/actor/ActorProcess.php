@@ -6,6 +6,8 @@
  * Time: 13:13
  */
 
+namespace EasySwoole\Actor;
+
 use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\Socket;
 
