@@ -25,7 +25,8 @@ class UserinfoModel extends SuperModel {
         }
 
         if ($sequence_no) {
-            $userid = sprintf("%s%03d", $cur_time, substr($sequence_no, -3));
+            $time_from_cur = $cur_time - 1554557274; // 2019-04-22
+            $userid = sprintf("%s%03d", substr($time_from_cur, 0, -2), substr($sequence_no, -3));
             return intval($userid);
         }
     }
