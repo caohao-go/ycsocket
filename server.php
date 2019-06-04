@@ -4,8 +4,8 @@ use EasySwoole\Actor\Actor;
 
 date_default_timezone_set('Asia/Shanghai');
 header('Content-Type: text/html; charset=UTF-8');
-ini_set('display_errors', 'On');
-error_reporting(E_ERROR);
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
 
 define("SERVER_NAME", 'TT');
 
@@ -70,7 +70,6 @@ $ws->on('message', function($ws, $frame) {
             while (true) {
                 //分批从 connection_list 函数获取现在连接中的fd，每轮100个
                 $conn_list = $ws->connection_list($start_fd, 100);
-                //var_dump($conn_list);
 
                 if ($conn_list === false || count($conn_list) === 0) {
                     return;
