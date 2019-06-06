@@ -22,6 +22,23 @@ swoole
 
 本框架 Actor 模型借鉴自EasySwoole 框架的Actor模块。 github网址： https://github.com/easy-swoole/actor ，做了些修改后融入本框架
 
+# 代码结构
+```php
+———————————————— 
+|--- server.php               //启动入口 
+|--- system                   //框架系统代码
+|--- application              //业务代码 
+         |----- config        //配置目录
+         |----- controller    //控制器目录
+                |------ User.php    //User控制器
+         |----- core          //框架基类目录
+         |----- entity        //实体层目录，共享内存
+         |----- helpers       //公共函数目录
+         |----- library       //公共类库目录
+         |----- logic         //逻辑层
+         |----- models        //模型层目录
+```
+
 # Actor 模型
    在高并发环境中，为了保证多个进程同时访问一个对象时的数据安全，我们通常采用两种策略，共享数据和消息传递，
    
