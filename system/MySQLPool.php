@@ -97,7 +97,7 @@ class MySQLPool {
 
     function update($table = '', $where = NULL, $data = NULL) {
         if (empty($table) || empty($where) || empty($data) || !is_array($data)) {
-            throw new RuntimeException("update_table_or_data_must_be_set");
+            throw new RuntimeException("update_table_or_data_must_be_set table=[".json_encode($table)."], where=[".json_encode($where)."], data=[".json_encode($data)."]");
         }
 
         $sql_stat = swoole_orm::update($table, $data, $where);
