@@ -39,6 +39,13 @@ swoole
          |----- models        //模型层目录
 ```
 
+# 请求路由
+```
+webSocket.send('{"c":"user","m":"getUserInfo", "userid":1321234}');
+```
+输入参数为json， 根据 c 和 m 参数，路由到 controller/User.php 下 getUserInfoAction 函数。
+
+
 # Actor 模型
    在高并发环境中，为了保证多个进程同时访问一个对象时的数据安全，我们通常采用两种策略，共享数据和消息传递，
    
