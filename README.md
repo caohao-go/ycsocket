@@ -39,12 +39,66 @@ swoole
          |----- models        //模型层目录
 ```
 
-# 请求路由
+# 请求路由与验签
 ```
 webSocket.send('{"c":"user","m":"getUserInfo", "userid":1321234}');
 ```
-输入参数为json， 根据 c 和 m 参数，路由到 controller/User.php 下 getUserInfoAction 函数。
+输入参数为json， 根据 c 和 m 参数，路由到 controller/User.php 下 getUserInfoAction 函数。路由逻辑在 Application->run() 方法中，
+路由之前，首先会调用 $this->_auth($params) 对参数验签，我们可以在该函数中加入自己的签名验证逻辑。
 
+```php
+system/Application.php
+class Application {
+    var $input_fd;
+
+    public function __construct($fd) {
+        $this->input_fd = $fd;
+    }
+
+    public function run(& $params, $clientInfo, & $ws) {
+        $ret = $this->_auth($params);
+        if ($ret != 0) {
+            return $ret;
+        }
+
+        $controller = ucfirst($params['c']);
+        $action = $params['m'] . "Action";
+        $class_name = $controller . "Controller";
+
+        try {
+            $obj = new $class_name($this->input_fd, $params, $clientInfo, $ws);
+
+            if (!method_exists($obj, $action)) {
+                unset($obj);
+                show_404("$controller/$action");
+                return $this->response_error(3, "route error");
+            }
+
+            $ret = $obj->$action();
+            unset($obj);
+            return $ret;
+        } catch (Exception $e) {
+            unset($obj);
+            $logger = new Logger(array('file_name' => 'exception_log'));
+            $logger->LogError("Catch An Exception File=[".$e->getFile()."|".$e->getLine()."] Code=[".$e->getCode()."], Message=[".$e->getMessage()."]");
+
+            echo "Catch An Exception \n";
+            echo "File:" . $e->getFile() . "\n";
+            echo "Line:" . $e->getLine() . "\n";
+            echo "Code:" . $e->getCode() . "\n";
+            echo "Message:" . $e->getMessage() . "\n";
+            return $this->response_error(99, "system exception");
+        }
+    }
+
+    //验签过程
+    protected function _auth(& $params) {
+        return 0;
+    }
+
+   	...
+}
+```
 
 # Actor 模型
    在高并发环境中，为了保证多个进程同时访问一个对象时的数据安全，我们通常采用两种策略，共享数据和消息传递，
