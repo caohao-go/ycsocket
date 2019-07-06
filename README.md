@@ -100,6 +100,76 @@ class Application {
 }
 ```
 
+# 控制器Controller
+所有控制器位于：application/controllers 目录下，继承自SuperController ，提供4个返回函数，response_error返回自己报错信息，response_success_to_all返回数据给所有接入者，例如世界聊天，response_success_to_me 返回信息给自己，response_success_to_uid返回数据给指定uid，在 server.php ，数据接入的时候，我们会将 uid 绑定到 socket fd 上面去。
+
+```php
+server.php
+if(!empty($input['userid'])) { //绑定 userid 到 fd
+	$ws->bind($frame->fd, $input['userid']);
+	Userfd::getInstance()->set($input['userid'], $frame->fd);
+}
+```
+
+```php
+class ShinelightController extends SuperController {
+    public function init() {
+        $this->userinfo_model = $this->loader->model('UserinfoModel');
+        $this->item_model = $this->loader->model('ItemModel');
+        $this->util_log = $this->loader->logger('shinelight_log');
+    }
+
+    //聊天接口
+    public function chatAction() {
+        $userId = $this->params['userid'];
+        $nickname = $this->params['nickname'];
+        $avatar_url = $this->params['avatar_url'];
+        $content = $this->params['content'];
+
+        if (empty($content)) {
+            return $this->response_error(13342339, '内容不能为空');
+        }
+
+        $result = array();
+        $result['userid'] = $userId;
+        $result['nickname'] = $nickname;
+        $result['avatar_url'] = $avatar_url;
+        $result['content'] = $content;
+
+        return $this->response_success_to_all($result);
+    }
+    
+    //返回用户道具接口
+    public function userItemAction() {
+        $userId = $this->params['userid'];
+        
+        $data = $this->item_model->get_user_items($userId);
+        return $this->response_success_to_me(['list' => $data]);
+    }
+    
+    //私聊
+    public function toChatAction() {
+        $userId = $this->params['userid'];
+        $nickname = $this->params['nickname'];
+        $avatar_url = $this->params['avatar_url'];
+        $content = $this->params['content'];
+        $to_uid = $this->params['to_uid'];
+
+        if (empty($content)) {
+            return $this->response_error(13342339, '内容不能为空');
+        }
+
+        $result = array();
+        $result['userid'] = $userId;
+        $result['nickname'] = $nickname;
+        $result['avatar_url'] = $avatar_url;
+        $result['content'] = $content;
+
+        return $this->response_success_to_uid($to_uid, $result);
+    }
+}
+```
+
 # Actor 模型
    在高并发环境中，为了保证多个进程同时访问一个对象时的数据安全，我们通常采用两种策略，共享数据和消息传递，
    
