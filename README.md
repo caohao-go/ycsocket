@@ -101,7 +101,12 @@ class Application {
 ```
 
 # 控制器Controller
-所有控制器位于：application/controllers 目录下，继承自SuperController ，提供4个返回函数，response_error返回自己报错信息，response_success_to_all返回数据给所有接入者，例如世界聊天，response_success_to_me 返回信息给自己，response_success_to_uid返回数据给指定uid，在 server.php ，数据接入的时候，我们会将 uid 绑定到 socket fd 上面去。
+所有控制器位于：application/controllers 目录下，继承自SuperController ，
+提供4个返回函数：
+	response_error返回报错信息给自己，
+	response_success_to_all 返回数据给当前所有玩家，例如世界聊天，
+	response_success_to_me 返回数据给自己，
+	response_success_to_uid 返回数据给指定uid，在 server.php ，数据接入的时候，我们会将 uid 绑定到 socket fd 上面去。
 
 ```php
 //server.php
