@@ -174,6 +174,17 @@ class ShinelightController extends SuperController {
 }
 ```
 
+# 加载器
+通过 Loader 加载器可以加载模型层，公共类库，公共函数，数据库，缓存等对象， Logger 为日志类。
+```php
+$this->userinfo_model = $this->loader->model('UserinfoModel');
+$this->util_log = $this->loader->logger('shinelight_log');
+$this->util_log = $this->loader->library('wxpay');
+$this->util_log = $this->loader->entity('Items');
+$this->util_log = $this->loader->config('config');
+
+```
+
 # Actor 模型
    在高并发环境中，为了保证多个进程同时访问一个对象时的数据安全，我们通常采用两种策略，共享数据和消息传递，
    
