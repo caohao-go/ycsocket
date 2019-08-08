@@ -187,7 +187,7 @@ $this->util_log = $this->loader->config('config');
 
 ```
 # 模型层
-通过 $this->item_model = $this->loader->model('ItemModel'); 去加载模型，Model 继承自 CoreModel。
+通过 $this->item_model = $this->loader->model('ItemModel'); 去加载模型，Model 继承自 CoreModel。CoreModel提供了许多快速操作数据库的方法，如果你不需要，也可以直接继承自 SuperModel， CoreModel也是继承自SuperModel，在 SuperModel中，构造函数会调用子类的init方法，所以，如果你有初始化的需求，请放到 init() 函数中。 $this->db_name
 ```php
 class ItemModel extends CoreModel {
     public function init() {
