@@ -101,7 +101,9 @@ class Application {
 ```
 
 # 控制器Controller
-所有控制器位于：application/controllers 目录下，继承自SuperController，提供4个返回函数：<br>
+所有控制器位于：application/controllers 目录下，继承自SuperController，父类SuperController 的构造函数中会调用$this->init()函数，所以你的控制器如果有初始化任务，请写在 init 函数里。
+
+提供4个返回函数：<br>
 	response_error 返回报错信息给自己<br>
 	response_success_to_all 返回数据给当前所有玩家，例如世界聊天<br>
 	response_success_to_me 返回数据给自己<br>
@@ -183,6 +185,16 @@ $this->util_log = $this->loader->library('wxpay');
 $this->util_log = $this->loader->entity('Items');
 $this->util_log = $this->loader->config('config');
 
+```
+# 模型层
+通过 $this->item_model = $this->loader->model('ItemModel'); 去加载模型，Model 继承自 CoreModel。
+```php
+class ItemModel extends CoreModel {
+    public function init() {
+        $this->util_log = $this->loader->logger('item_log');
+        $this->db_name = "shine_light";
+    }
+}
 ```
 
 # Actor 模型
