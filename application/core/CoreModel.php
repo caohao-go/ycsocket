@@ -22,7 +22,7 @@ class CoreModel extends SuperModel {
      * 根据key获取表记录
      * @param string redis_key redis 缓存键值
      */
-    private function get_redis($redis_key) {
+    public function get_redis($redis_key) {
         if (empty($redis_key)) return;
         return RedisPool::instance($this->redis_name)->get($redis_key);
     }
@@ -34,7 +34,7 @@ class CoreModel extends SuperModel {
      * @param int redis_expire redis 缓存到期时长(秒)
      * @param boolean set_empty_flag 是否缓存空值，如果缓存空值，在表记录更新之后，一定记得清理空值标记缓存
      */
-    private function set_redis($redis_key, $data, $redis_expire, $set_empty_flag) {
+    public function set_redis($redis_key, $data, $redis_expire, $set_empty_flag) {
         if (empty($redis_key)) return;
 
         if (empty($data) && $set_empty_flag) {
