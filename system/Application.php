@@ -32,6 +32,11 @@ $globalTable->column('data', swoole_table::TYPE_STRING, 4096);
 $globalTable->column('expire', swoole_table::TYPE_INT);
 $globalTable->create();
 
+$globalIntTable = new swoole_table(1024);
+$globalIntTable->column('data', swoole_table::TYPE_INT);
+$globalIntTable->column('expire', swoole_table::TYPE_INT);
+$globalIntTable->create();
+
 $roomActorId = new swoole_table(1);
 $roomActorId->column('id', swoole_table::TYPE_STRING, 32);
 $roomActorId->create();

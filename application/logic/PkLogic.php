@@ -70,7 +70,7 @@ class PkLogic extends ActorBean {
         $this->gameLogics[$uid]->setProxy($proxy);
     }
 
-    function onDestroy() {
+    function onDestroy(...$arg) {
         foreach($this->gameLogics as $gameLogics) {
             $gameLogics->destroy();
         }
