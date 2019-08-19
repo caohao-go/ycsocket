@@ -31,7 +31,7 @@ class GlobalEntity {
     }
 
     static public function incr($id, $incrby = 1) {
-		global $globalIntTable;
+        global $globalIntTable;
         $data = $globalIntTable->incr($id, 'data', $incrby);
         return $data;
     }
@@ -41,12 +41,12 @@ class GlobalEntity {
             $expire = intval($expire) + time();
         }
 
-		global $globalIntTable;
+        global $globalIntTable;
         return $globalIntTable->set($id, array("data" => intval($data), "expire" => intval($expire)));
     }
 
     static public function get_int($id) {
-		global $globalIntTable;
+        global $globalIntTable;
         $data = $globalIntTable->get($id);
         if (empty($data)) {
             return null;
@@ -59,9 +59,9 @@ class GlobalEntity {
             }
         }
     }
-    
+
     static public function del_int($id) {
-		global $globalIntTable;
+        global $globalIntTable;
         $globalIntTable->del($id);
     }
 }
