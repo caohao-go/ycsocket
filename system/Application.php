@@ -78,6 +78,10 @@ class Application {
             return $ret;
         }
 
+        foreach($params as $k => $v) {
+            $params[$k] = trim($v);
+        }
+
         $controller = ucfirst($params['c']);
         $action = $params['m'] . "Action";
         $class_name = $controller . "Controller";
