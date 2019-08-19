@@ -27,8 +27,7 @@ include(APPROOT . "/core/CoreModel.php");
 
 echo "\n创建跨进程全局实体类...\n";
 require(BASEPATH . "/Global.php");
-$globalTable = new swoole_table(40960);
-$globalTable->column('int_data', swoole_table::TYPE_INT);
+$globalTable = new swoole_table(1024);
 $globalTable->column('data', swoole_table::TYPE_STRING, 4096);
 $globalTable->column('expire', swoole_table::TYPE_INT);
 $globalTable->create();
@@ -37,7 +36,7 @@ $roomActorId = new swoole_table(1);
 $roomActorId->column('id', swoole_table::TYPE_STRING, 32);
 $roomActorId->create();
 
-$fdUserTable = new swoole_table(102400);
+$fdUserTable = new swoole_table(40960);
 $fdUserTable->column('fd', swoole_table::TYPE_INT);
 $fdUserTable->create();
 

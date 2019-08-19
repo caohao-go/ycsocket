@@ -31,8 +31,8 @@ class GlobalEntity {
     }
 
     static public function incr($id, $incrby = 1) {
-        global $globalTable;
-        $data = $globalTable->incr($id, 'data', $incrby);
+		global $globalIntTable;
+        $data = $globalIntTable->incr($id, 'data', $incrby);
         return $data;
     }
 
