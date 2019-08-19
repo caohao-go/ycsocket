@@ -157,11 +157,7 @@ class CoreModel extends SuperModel {
     public function get_table_data_by_key($table, $key, $value, $redis_key = "", $redis_expire = 300, $set_empty_flag = true) {
         $data = $this->get_redis($redis_key);
         if (!empty($data)) {
-            if ($data == self::EMPTY_STRING) {
-                return;
-            } else {
-                return unserialize($data);
-            }
+            return $data == self::EMPTY_STRING ? array() : unserialize($data);
         }
 
         $data = MySQLPool::instance($this->db_name)->get_one($table, [$key => $value]);
