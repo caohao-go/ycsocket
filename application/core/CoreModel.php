@@ -409,7 +409,13 @@ class CoreModel extends SuperModel {
         $myRank = (empty($myRank) && $myRank !== 0) ? 0 : $myRank + 1;
         return $myRank;
     }
-
+    
+    //获取我的分数
+    public function get_my_rank_score($project_name, $userid) {
+        $score = RedisPool::instance($this->redis_name)->zscore("pre_{$project_name}_rank", $userid);
+        return intval($score);
+    }
+    
     //获取排名列表
     public function get_rank_list($project_name, $return_userinfo_flag = true, $start = 0, $end = 99) {
         $pre_rank_cache = "pre_{$project_name}_rank_cache";
