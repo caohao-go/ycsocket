@@ -41,22 +41,27 @@ class GlobalEntity {
             $expire = intval($expire) + time();
         }
 
-        global $globalTable;
-        return $globalTable->set($id, array("data"=> "", "int_data" => $data, "expire" => intval($expire)));
+		global $globalIntTable;
+        return $globalIntTable->set($id, array("data" => intval($data), "expire" => intval($expire)));
     }
 
     static public function get_int($id) {
-        global $globalTable;
-        $data = $globalTable->get($id);
+		global $globalIntTable;
+        $data = $globalIntTable->get($id);
         if (empty($data)) {
             return null;
         } else {
             if ($data["expire"] != 0 && time() > $data["expire"]) {
-                $globalTable->del($id);
+                $globalIntTable->del($id);
                 return null;
             } else {
-                return $data['int_data'];
+                return $data['data'];
             }
         }
+    }
+    
+    static public function del_int($id) {
+		global $globalIntTable;
+        $globalIntTable->del($id);
     }
 }
