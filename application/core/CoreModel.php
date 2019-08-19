@@ -463,8 +463,9 @@ class CoreModel extends SuperModel {
         RedisPool::instance($this->redis_name)->del("pre_{$project_name}_rank");
     }
 
-    //清楚我的排行
+    //清除我的排行
     public function clear_my_rank($project_name, $userid) {
         $myRank = RedisPool::instance($this->redis_name)->zrem("pre_{$project_name}_rank", $userid);
+        RedisPool::instance($this->redis_name)->del("pre_{$project_name}_rank_cache");
     }
 }
