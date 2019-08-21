@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * ShinelightController Class
+ * ShinelightController Class https://github.com/caohao-php/ycsocket
  *
  * @package			Ycsocket
  * @subpackage		Controller

@@ -1,5 +1,14 @@
 <?php
 
+/** server.php
+ * SuperModel Class
+ *
+ * @package			Ycsocket  https://github.com/caohao-php/ycsocket
+ * @subpackage		server
+ * @category		server
+ * @author			caohao
+ */
+
 use EasySwoole\Actor\Actor;
 
 date_default_timezone_set('Asia/Shanghai');

@@ -1,4 +1,12 @@
 <?php
+/** RedisPool.php
+ * SuperModel Class
+ *
+ * @package			Ycsocket  https://github.com/caohao-php/ycsocket
+ * @subpackage		RedisPool
+ * @category		RedisPool
+ * @author			caohao
+ */
 class RedisPool {
     const POOL_SIZE = 10;
 

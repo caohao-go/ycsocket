@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * UserController Class
+ * UserController Class  https://github.com/caohao-php/ycsocket
  *
  * @package       Ycsocket
  * @subpackage    Controller

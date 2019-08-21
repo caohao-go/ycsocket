@@ -1,4 +1,12 @@
 <?php
+/** Exceptions.php
+ * SuperModel Class
+ *
+ * @package			Ycsocket  https://github.com/caohao-php/ycsocket
+ * @subpackage		Exceptions
+ * @category		Exceptions
+ * @author			caohao
+ */
 if ( ! function_exists('show_error')) {
     function show_error($message, $status_code = 500, $heading = 'An Error Was Encountered') {
         echo "$heading\n";

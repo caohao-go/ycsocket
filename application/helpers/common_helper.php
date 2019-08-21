@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * @package        Ycsocket
+ * @package        Ycsocket  https://github.com/caohao-php/ycsocket
  * @subpackage    Function
  * @category      Common Function
  * @author        caohao

@@ -1,4 +1,12 @@
 <?php
+/** MySQLPool.php
+ * SuperModel Class
+ *
+ * @package			Ycsocket  https://github.com/caohao-php/ycsocket
+ * @subpackage		MySQLPool
+ * @category		MySQLPool
+ * @author			caohao
+ */
 class MySQLPool {
     const POOL_SIZE = 10;
 

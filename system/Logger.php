@@ -1,6 +1,6 @@
 <?php
 /**
- * Logger Class
+ * Logger Class  https://github.com/caohao-php/ycsocket
  *
  * @package       Ycsocket
  * @subpackage    Libraries

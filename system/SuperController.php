@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /** 控制器基类
- * SuperController Class
+ * SuperController Class  https://github.com/caohao-php/ycsocket
  *
  * @package			Ycsocket
  * @subpackage		Controller

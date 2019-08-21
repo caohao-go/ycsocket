@@ -1,5 +1,12 @@
 <?php
-
+/** Application.php
+ * SuperModel Class
+ *
+ * @package			Ycsocket  https://github.com/caohao-php/ycsocket
+ * @subpackage		Application
+ * @category		Application
+ * @author			caohao
+ */
 use EasySwoole\Actor\Actor;
 
 //日志目录
