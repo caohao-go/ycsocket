@@ -1,11 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2018/5/24
- * Time: 下午3:56
+/** Singleton.php
+ * SuperModel Class
+ *
+ * @package			Ycsocket  https://github.com/caohao-php/ycsocket
+ * @subpackage		Singleton
+ * @category		Singleton
+ * @author			caohao
  */
-
 trait Singleton
 {
     private static $instance;

@@ -1,5 +1,12 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
+/** Global.php
+ * SuperModel Class
+ *
+ * @package			Ycsocket  https://github.com/caohao-php/ycsocket
+ * @subpackage		Global
+ * @category		Global
+ * @author			caohao
+ */
 class GlobalEntity {
     static public function set($id, $data, $expire = 0) {
         if (intval($expire) != 0) {

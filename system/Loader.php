@@ -1,6 +1,6 @@
 <?php
 /**
- * Loader Class
+ * Loader Class  https://github.com/caohao-php/ycsocket
  *
  * @package			Ycsocket
  * @subpackage		Libraries
