@@ -146,27 +146,6 @@ class CoreModel extends SuperModel {
     }
 
     /**
-     * 根据key获取表记录
-     * @param string table 表名
-     * @param string key 键名
-     * @param string value 键值
-     * @param string redis_key redis 缓存键值, 可空， 非空时清理键值缓存
-     * @param int redis_expire redis 缓存到期时长(秒)
-     * @param boolean set_empty_flag 是否标注空值，如果标注空值，在表记录更新之后，一定记得清理空值标记缓存
-     */
-    public function get_table_data_by_key($table, $key, $value, $redis_key = "", $redis_expire = 300, $set_empty_flag = true) {
-        $data = $this->get_redis($redis_key);
-        if (!empty($data)) {
-            return $data == self::EMPTY_STRING ? array() : unserialize($data);
-        }
-
-        $data = MySQLPool::instance($this->db_name)->get_one($table, [$key => $value]);
-
-        $this->set_redis($redis_key, $data, $redis_expire, $set_empty_flag);
-        return $data;
-    }
-
-    /**
      * 获取表数据
      * @param string table 表名
      * @param array where 查询条件
