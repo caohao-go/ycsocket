@@ -492,5 +492,58 @@ class PkLogic extends ActorBean {
 }
 ```
 
-   
+## 附录 - CoreModel 中的辅助极速开发函数（不关心可以跳过）
+$this->redis_name = 'default_master';   //用到快速缓存时，需要在 __construct 构造函数中加上 redis 缓存配置，有防止数据库击穿机制。
+```php
+/**
+ * 插入表记录
+ * @param string table 表名
+ * @param array data 表数据
+ * @param string redis_key redis 缓存键值, 可空， 非空时清理键值缓存
+ */
+public function insert_table($table, $data, $redis_key = "");
+/**
+ * 更新表记录
+ * @param string table 表名
+ * @param array where 查询条件
+ * @param array data 更新数据
+ * @param string redis_key redis 缓存键值, 可空， 非空时清理键值缓存
+ */
+public function update_table($table, $where, $data, $redis_key = "");
+/**
+ * 替换表记录
+ * @param string table 表名
+ * @param array data 替换数据
+ * @param string redis_key redis 缓存键值, 可空， 非空时清理键值缓存
+ */
+public function replace_table($table, $data, $redis_key = "");
+/**
+ * 删除表记录
+ * @param string table 表名
+ * @param array where 查询条件
+ * @param string redis_key redis缓存键值, 可空， 非空时清理键值缓存
+ */
+public function delete_table($table, $where, $redis_key = "");
+/**
+ * 获取表数据
+ * @param string table 表名
+ * @param array where 查询条件
+ * @param string redis_key redis 缓存键值, 可空， 非空时清理键值缓存
+ * @param int redis_expire redis 缓存到期时长(秒)
+ * @param string $column 数据库表字段，可空
+ * @param boolean set_empty_flag 是否标注空值，如果标注空值，在表记录更新之后，一定记得清理空值标记缓存
+ */
+public function get_table_data($table, $where = array(), $redis_key = "", $redis_expire = 600, $column = "*", $set_empty_flag = true);
+/**
+ * 获取一条表数据
+ * @param string table 表名
+ * @param array where 查询条件
+ * @param string redis_key redis 缓存键值, 可空， 非空时清理键值缓存
+ * @param int redis_expire redis 缓存到期时长(秒)
+ * @param string $column 数据库表字段，可空
+ * @param boolean set_empty_flag 是否标注空值，如果标注空值，在表记录更新之后，一定记得清理空值标记缓存
+ */
+public function get_one_table_data($table, $where, $redis_key = "", $redis_expire = 600, $column = "*", $set_empty_flag = true);
+```
+
    
