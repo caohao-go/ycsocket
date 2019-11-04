@@ -167,6 +167,43 @@ class CoreModel extends SuperModel {
     }
 
     /**
+     * 获取表数据
+     * @param string table 表名
+     * @param array where 查询条件
+     * @param array page - 页数，从 1 开始
+     * @param array page_size - 每页条数，默认为 10 条
+     * @param string redis_key redis 缓存键值, 可空， 非空时清理键值缓存
+     * @param int redis_expire redis 缓存到期时长(秒)
+     * @param array column 请求列
+     * @param boolean set_empty_flag 是否标注空值，如果标注空值，在表记录更新之后，一定记得清理空值标记缓存
+     */
+    public function get_table_data_by_page($table, $where = null, $page = 1, $page_size = 10, $redis_key = "", $redis_expire = 600, $column = "*", $set_empty_flag = true) {
+        if($page < 1 || $page_size <= 0) {
+            return array();
+        }
+
+        $data = $this->get_redis($redis_key);
+        if (!empty($data)) {
+            if ($data == self::EMPTY_STRING) {
+                return;
+            } else {
+                return unserialize($data);
+            }
+        }
+
+        $where = empty($where) ? array() : $where;
+        $start = ($page - 1) * $page_size;
+        $where['LIMIT'] = [$start, $page_size];
+
+        $data = MySQLPool::instance($this->db_name)->get($table, $where, $column);
+        if($data != -1) {
+            $this->set_redis($redis_key, $data, $redis_expire, $set_empty_flag);
+            return $data;
+        }
+        return array();
+    }
+
+    /**
      * 获取一条表数据
      * @param string table 表名
      * @param array where 查询条件
