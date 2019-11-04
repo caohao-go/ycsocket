@@ -535,6 +535,18 @@ public function delete_table($table, $where, $redis_key = "");
  */
 public function get_table_data($table, $where = array(), $redis_key = "", $redis_expire = 600, $column = "*", $set_empty_flag = true);
 /**
+ * 获取表数据
+ * @param string table 表名
+ * @param array where 查询条件
+ * @param array page - 页数，从 1 开始
+ * @param array page_size - 每页条数，默认为 10 条
+ * @param string redis_key redis 缓存键值, 可空， 非空时清理键值缓存
+ * @param int redis_expire redis 缓存到期时长(秒)
+ * @param array column 请求列
+ * @param boolean set_empty_flag 是否标注空值，如果标注空值，在表记录更新之后，一定记得清理空值标记缓存
+ */
+public function get_table_data_by_page($table, $where = null, $page = 1, $page_size = 10, $redis_key = "", $redis_expire = 600, $column = "*", $set_empty_flag = true)
+/**
  * 获取一条表数据
  * @param string table 表名
  * @param array where 查询条件
