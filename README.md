@@ -535,7 +535,7 @@ public function delete_table($table, $where, $redis_key = "");
  */
 public function get_table_data($table, $where = array(), $redis_key = "", $redis_expire = 600, $column = "*", $set_empty_flag = true);
 /**
- * 获取表数据
+ * 分页获取表数据
  * @param string table 表名
  * @param array where 查询条件
  * @param array page - 页数，从 1 开始
