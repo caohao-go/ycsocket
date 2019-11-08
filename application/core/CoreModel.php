@@ -152,7 +152,7 @@ class CoreModel extends SuperModel {
      * @param string redis_key redis 缓存键值, 可空， 非空时清理键值缓存
      * @param int redis_expire redis 缓存到期时长(秒)
      * @param string $column 数据库表字段，可空
-     * @param boolean set_empty_flag 是否标注空值，如果标注空值，在表记录更新之后，一定记得清理空值标记缓存
+     * @param boolean set_empty_flag 是否将空值写入缓存，防止数据库击穿，默认为是
      */
     public function get_table_data($table, $where = null, $redis_key = "", $redis_expire = 600, $column = "*", $set_empty_flag = true) {
         $data = $this->get_redis($redis_key);
@@ -175,7 +175,7 @@ class CoreModel extends SuperModel {
      * @param string redis_key redis 缓存键值, 可空， 非空时清理键值缓存
      * @param int redis_expire redis 缓存到期时长(秒)
      * @param array column 请求列
-     * @param boolean set_empty_flag 是否标注空值，如果标注空值，在表记录更新之后，一定记得清理空值标记缓存
+     * @param boolean set_empty_flag 是否将空值写入缓存，防止数据库击穿，默认为是
      */
     public function get_table_data_by_page($table, $where = null, $page = 1, $page_size = 10, $redis_key = "", $redis_expire = 600, $column = "*", $set_empty_flag = true) {
         if($page < 1 || $page_size <= 0) {
@@ -210,7 +210,7 @@ class CoreModel extends SuperModel {
      * @param string redis_key redis 缓存键值, 可空， 非空时清理键值缓存
      * @param int redis_expire redis 缓存到期时长(秒)
      * @param string $column 数据库表字段，可空
-     * @param boolean set_empty_flag 是否标注空值，如果标注空值，在表记录更新之后，一定记得清理空值标记缓存
+     * @param boolean set_empty_flag 是否将空值写入缓存，防止数据库击穿，默认为是
      */
     public function get_one_table_data($table, $where = null, $redis_key = "", $redis_expire = 600, $column = "*", $set_empty_flag = true) {
         $data = $this->get_redis($redis_key);
