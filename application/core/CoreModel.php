@@ -182,6 +182,10 @@ class CoreModel extends SuperModel {
             return array();
         }
 
+        if(!empty($redis_key)) {
+            $redis_key = $redis_key . "_{$page_size}_{$page}";
+        }
+
         $data = $this->get_redis($redis_key);
         if (!empty($data)) {
             if ($data == self::EMPTY_STRING) {
