@@ -33,7 +33,6 @@ swoole
                 |------ User.php    //User控制器
          |----- core          //框架基类目录
          |----- entity        //实体层目录，共享内存
-         |----- helpers       //公共函数目录
          |----- library       //公共类库目录
          |----- logic         //逻辑层
          |----- models        //模型层目录

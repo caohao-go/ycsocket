@@ -70,9 +70,6 @@ include_file(APPROOT . "/library");
 echo "\n加载 entity ...\n";
 include_file(APPROOT . "/entity");
 
-echo "\n加载 helper ...\n";
-include_file(APPROOT . "/helpers");
-
 echo "\n注册 Actor ...\n";
 register_actor();
 
