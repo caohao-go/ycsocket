@@ -18,7 +18,7 @@ swoole
 
 # 应用场景
 我在一个大型RPG游戏用到 <br>
-![Image](https://img-blog.csdnimg.cn/20200421222726723.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Nhb2hhbzA1OTE=,size_16,color_FFFFFF,t_70)
+![Image](https://github.com/caohao-php/ycsocket/blob/master/image/2.jpeg)
 
 
 
