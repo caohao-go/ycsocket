@@ -16,8 +16,9 @@ swoole
 
 支持 MySQL 协程连接池， 源码位于 system/MySQLPool，支持失败自动重连
 
-#应用场景
-我在一个大型RPG游戏用到
+# 应用场景
+我在一个大型RPG游戏用到 <br>
+![Image](https://img-blog.csdnimg.cn/20200421222726723.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2Nhb2hhbzA1OTE=,size_16,color_FFFFFF,t_70)
 
 
 
