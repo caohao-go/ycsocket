@@ -261,6 +261,13 @@ class GameDao extends SuperDao
 }
 ```
 
+# library库
+第三方类库都存在于 application/library 目录下 ，通过$this->utillib = $this->loader->dao("Utillib"); 实例化。<br>
+
+# 日志
+
+
+
 ## 附录 - CoreModel 中的辅助极速开发函数（不关心可以跳过）
 
 ```php
