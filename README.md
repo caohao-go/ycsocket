@@ -259,6 +259,28 @@ class GameDao extends SuperDao
 }
 ```
 
+```php
+//数据库配置 database.php
+$util_db_config['default']['host'] = '127.0.0.1';
+$util_db_config['default']['username'] = 'test';
+$util_db_config['default']['password'] = 'test';
+$util_db_config['default']['dbname'] = 'user';
+$util_db_config['default']['char_set'] = 'utf8';
+$util_db_config['default']['dbcollat'] = 'utf8_general_ci';
+$util_db_config['default']['pool_size'] = 10;
+
+//redis配置 redis.php
+$util_redis_conf['userinfo']['host'] = '127.0.0.1';
+$util_redis_conf['userinfo']['port'] = 6381;
+$util_redis_conf['userinfo']['auth'] = 'o01nc7vgd65xa';
+
+//使用
+MySQLPool::instance('default')->query($sql);
+MySQLPool::instance('default')->get($table, $where, $column);
+RedisPool::instance('userinfo')->set('test', 123);
+RedisPool::instance('userinfo')->expire('test', 86400);
+```
+
 # library库
 第三方类库都存在于 application/library 目录下 ，通过$this->utillib = $this->loader->library("Utillib"); 实例化。<br>
 
