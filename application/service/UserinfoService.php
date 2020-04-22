@@ -30,6 +30,7 @@ class UserinfoService extends SuperService
         if (empty($token) || $token != $userInfo['token']) {
             throw new LogicException("token is invalid", 99900033);
         }
+
         return $userInfo;
     }
 

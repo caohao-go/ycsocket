@@ -25,7 +25,7 @@ class GameController extends SuperController
     public function verAction()
     {
         $userId = $this->params['userid'];
-        return $this->response_success_to_all(['ver' => Zoneinfo::$game_version]);
+        return $this->response_success_to_me(['ver' => Zoneinfo::$game_version]);
     }
 
     //聊天接口

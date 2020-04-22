@@ -69,7 +69,7 @@ class GameService extends SuperService
     public function modify_rank($rank_name, $userid, $score, $expire = 0)
     {
         RedisPool::instance('pika')->zadd("pre_{$rank_name}_rank", $score, $userid);
-        $this->clear_redis_cache("pre_{$rank_name}_rank_cache");
+        $this->game_dao->clear_redis_cache("pre_{$rank_name}_rank_cache");
 
         if (!empty($expire)) {
             RedisPool::instance('pika')->expire("pre_{$rank_name}_rank", $expire);
@@ -82,7 +82,7 @@ class GameService extends SuperService
     public function incr_rank_score($rank_name, $userid, $add_score, $expire = 0)
     {
         RedisPool::instance('pika')->zincrby("pre_{$rank_name}_rank", $add_score, $userid);
-        $this->clear_redis_cache("pre_{$rank_name}_rank_cache");
+        $this->game_dao->clear_redis_cache("pre_{$rank_name}_rank_cache");
 
         if (!empty($expire)) {
             RedisPool::instance('pika')->expire("pre_{$rank_name}_rank", $expire);
@@ -109,21 +109,21 @@ class GameService extends SuperService
     public function clear_rank($rank_name)
     {
         RedisPool::instance('pika')->del("pre_{$rank_name}_rank");
-        $this->clear_redis_cache("pre_{$rank_name}_rank_cache");
+        $this->game_dao->clear_redis_cache("pre_{$rank_name}_rank_cache");
     }
 
     //清除我的排行
     public function clear_my_rank($rank_name, $userid)
     {
         RedisPool::instance('pika')->zrem("pre_{$rank_name}_rank", $userid);
-        $this->clear_redis_cache("pre_{$rank_name}_rank_cache");
+        $this->game_dao->clear_redis_cache("pre_{$rank_name}_rank_cache");
     }
 
     //获取排名列表
     public function get_rank_list($rank_name, $return_userinfo_flag = true, $start = 0, $end = 99)
     {
         $pre_rank_cache = "pre_{$rank_name}_rank_cache";
-        $result = $this->hget_redis($pre_rank_cache, "{$start}_{$end}");
+        $result = $this->game_dao->hget_redis($pre_rank_cache, "{$start}_{$end}");
         if (!empty($result) && $result == SuperDao::EMPTY_STRING) {
             return array();
         }
@@ -155,7 +155,7 @@ class GameService extends SuperService
                 }
             }
 
-            $this->hset_redis($pre_rank_cache, "{$start}_{$end}", $result, 60);
+            $this->game_dao->hset_redis($pre_rank_cache, "{$start}_{$end}", $result, 60);
         }
 
         return $result;
