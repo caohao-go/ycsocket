@@ -267,7 +267,7 @@ class GameDao extends SuperDao
 # 日志
 日志可以通过 loader 实例化，实例化的日志会打印有请求参数和客户端IP等信息，也可以用得静态函数，不过静态函数无法获取则请求参数或者客户端IP等信息。<br>
 
-日志路径在 server.php 中配置，define('LOG_PATH', '/data/app/logs/super_server'); //日志目录 <br>
+日志路径在 server.php 中配置，记得把 /data/app/logs 的权限设置高些，define('LOG_PATH', '/data/app/logs/super_server'); //日志目录 <br>
 
 日志分如下5个级别：<br>
 const DEBUG = 'DEBUG';   /* 级别为 1 ,  调试日志,   当 DEBUG = 1 的时候才会打印调试 */<br>
