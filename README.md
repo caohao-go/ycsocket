@@ -170,6 +170,32 @@ class GameController extends SuperController
 }
 ```
 
+# 过滤验签
+application/Filter.php ， 在 auth 中写入验签方法，所有接口都会在这里校验， 所有GET、POST等参数放在 $params 里。
+```php
+class Filter
+{
+    //验签过程
+    public static function auth(& $params)
+    {
+        /*
+        if($auth_error == false) { //验签失败
+            return self::response_error(123, "auth error");
+        } */
+
+        //验签成功
+        return 0;
+    }
+
+    public static function response_error($code, $message)
+    {
+        $data = array("code" => $code, "msg" => $message);
+        $result['send_user'] = "me";
+        $result['msg'] = json_encode($data);
+        return $result;
+    }
+}
+```
 # 加载器
 通过 Loader 加载器可以加载业务层，dao层，公共库，日志、配置等对象， Logger 为日志类。
 ```php
