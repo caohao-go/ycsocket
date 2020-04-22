@@ -17,7 +17,7 @@ swoole
 支持 MySQL 协程连接池， 源码位于 system/MySQLPool，支持失败自动重连
 
 # 应用场景
-大型RPG游戏，纯php解决方案，php + swoole + ext-orm + zephir ，这个游戏的战斗部分完全用 zephir 来编写成 php 扩展，微信小游戏搜索："剑的传说" <br><br>
+大型RPG游戏，纯php解决方案，php + swoole + ext-orm + zephir ，这个游戏的战斗部分完全用 zephir 来编写成 php 扩展，能做到同时兼顾性能和开发效率，微信小游戏搜索："剑的传说" <br><br>
 ![Image](https://github.com/caohao-php/ycsocket/blob/master/image/1.jpeg)
 
 
