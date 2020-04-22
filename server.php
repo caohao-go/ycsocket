@@ -33,9 +33,11 @@ $sch->set(['max_coroutine' => 100000, 'enable_preemptive_scheduler' => true]);
 $sch->add(function () use ($port) {
     echo "监听端口:" . $port . "\n";
 
+    /// 初始化代码可以写在这里 ///
     Zoneinfo::update();
     Zoneinfo::game_version();
     Task::init_task();
+    /////////// end //////////
 
     //创建WebSocket
     $ws = new Co\Http\Server("0.0.0.0", $port, true);
