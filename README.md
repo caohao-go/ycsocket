@@ -34,12 +34,12 @@ swoole
          |----- service       //业务层
 ```
 
-# 请求路由与验签
+# 请求路由
 ```
 webSocket.send('{"c":"game","m":"ver", "userid":123593}');
 ```
 输入参数为json， 根据 c 和 m 参数，路由到 controller/Game.php 下 verAction 函数。路由逻辑在 Application->run() 方法中，
-路由之前，首先会调用 $this->_auth($params) 对参数验签，我们可以在该函数中加入自己的签名验证逻辑。
+路由之前，首先会调用 Filter::auth($params) 对参数验签，我们可以在该函数中加入自己的签名验证逻辑。
 
 ```php
 //system/Application.php
@@ -47,7 +47,7 @@ class Application
 {
     public function run(& $params, $clientInfo)
     {
-        $ret = $this->_auth($params);
+        $ret = Filter::auth($params);
         if ($ret != 0) {
             return $ret;
         }
@@ -92,11 +92,6 @@ class Application
                 return $this->response_error(99, "application exit");
             }
         }
-    }
-
-    //验签过程
-    protected function _auth(& $params) {
-        return 0;
     }
 
    	...
