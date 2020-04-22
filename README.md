@@ -274,7 +274,7 @@ $util_redis_conf['userinfo']['host'] = '127.0.0.1';
 $util_redis_conf['userinfo']['port'] = 6381;
 $util_redis_conf['userinfo']['auth'] = 'o01nc7vgd65xa';
 
-//使用
+//使用方法
 MySQLPool::instance('default')->query($sql);
 MySQLPool::instance('default')->get($table, $where, $column);
 RedisPool::instance('userinfo')->set('test', 123);

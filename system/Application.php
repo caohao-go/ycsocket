@@ -17,6 +17,7 @@ include(BASEPATH . "/SuperController.php");
 include(BASEPATH . "/SuperService.php");
 include(BASEPATH . "/SuperDao.php");
 include(BASEPATH . "/Connector.php");
+include(APP_ROOT . "/Filter.php");
 
 echo "\n加载 Library ...\n";
 include_file(APP_ROOT . "/library");
@@ -38,7 +39,7 @@ class Application
 
     public function run(& $params, $clientInfo)
     {
-        $ret = $this->_auth($params);
+        $ret = Filter::auth($params);
         if ($ret != 0) {
             return $ret;
         }
@@ -83,12 +84,6 @@ class Application
                 return $this->response_error(99, "application exit");
             }
         }
-    }
-
-    //验签过程
-    protected function _auth(& $params)
-    {
-        return 0;
     }
 
     public function response_error($code, $message)
