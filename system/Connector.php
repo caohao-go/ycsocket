@@ -44,7 +44,7 @@ class Connector
     {
         go(function () use ($msg) {
             foreach (self::$conn_map as $fd => & $ws) {
-                if ($fd % 1000 != SHINE_ZONE_ID) {
+                if ($fd % 1000 != GAME_ZONE_ID) {
                     continue;
                 }
 

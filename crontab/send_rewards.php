@@ -18,7 +18,7 @@ if ($input_zone_id < 1) {
 }
 
 //根据游戏不同区设置端口
-define('SHINE_ZONE_ID', $input_zone_id);  //游戏区
+define('GAME_ZONE_ID', $input_zone_id);  //游戏区
 
 include(BASEPATH . "/Application.php");
 

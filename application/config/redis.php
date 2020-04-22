@@ -4,13 +4,13 @@
 $util_redis_conf['userinfo']['host'] = '127.0.0.1';
 $util_redis_conf['userinfo']['port'] = 6381;
 
-if (SHINE_ZONE_ID == 1) {
+if (GAME_ZONE_ID == 1) {
     $util_redis_conf['default']['host'] = '127.0.0.1';
     $util_redis_conf['default']['port'] = 6379;
 
     $util_redis_conf['pika']['host'] = '127.0.0.1';
     $util_redis_conf['pika']['port'] = 9221;
-} else if (SHINE_ZONE_ID == 2) {
+} else if (GAME_ZONE_ID == 2) {
     $util_redis_conf['default']['host'] = '127.0.0.1';
     $util_redis_conf['default']['port'] = 6380;
 

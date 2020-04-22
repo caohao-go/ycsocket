@@ -52,14 +52,14 @@ $util_db_config['default']['char_set'] = 'utf8';
 $util_db_config['default']['dbcollat'] = 'utf8_general_ci';
 $util_db_config['default']['pool_size'] = 10;
 
-if (SHINE_ZONE_ID == 1) {
+if (GAME_ZONE_ID == 1) {
     $util_db_config['shine_light']['host'] = '127.0.0.1';
     $util_db_config['shine_light']['username'] = 'test';
     $util_db_config['shine_light']['password'] = 'test';
     $util_db_config['shine_light']['dbname'] = 'game_zone_1';
     $util_db_config['shine_light']['char_set'] = 'utf8';
     $util_db_config['shine_light']['dbcollat'] = 'utf8_general_ci';
-} else if (SHINE_ZONE_ID == 2) {
+} else if (GAME_ZONE_ID == 2) {
     $util_db_config['shine_light']['host'] = '127.0.0.1';
     $util_db_config['shine_light']['username'] = 'test';
     $util_db_config['shine_light']['password'] = 'test';
