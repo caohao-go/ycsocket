@@ -239,7 +239,7 @@ class GameDao extends SuperDao
 {
     public function init()
     {
-        $this->db_name = "shine_light";
+        $this->db_name = "game";
         $this->util_log = $this->loader->logger('game_log');
     }
     

@@ -83,7 +83,7 @@ class Connector
                         self::$conn_map[$fd]->close();
                         unset(self::$conn_map[$fd]);
                         //修改下线时间
-                        //MySQLPool::instance('shine_light')->update('user_grade', ['user_id' => $fd], ['off_time' => date('Y-m-d H:i:s')]);
+                        //MySQLPool::instance('game')->update('user_grade', ['user_id' => $fd], ['off_time' => date('Y-m-d H:i:s')]);
                     }
                     unset(self::$heartbeat_times_map[$fd]);
                 } else {

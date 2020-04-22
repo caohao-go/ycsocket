@@ -27,7 +27,7 @@ Co\run(function () {
 
     //奖品
     $rewards = array();
-    $data = MySQLPool::instance("shine_light")->query("select * from copy_reward where copy_id in (10001, 20100)");
+    $data = MySQLPool::instance("game")->query("select * from copy_reward where copy_id in (10001, 20100)");
 
     foreach ($data as $v) {
         $copy_id = $v['copy_id'];
