@@ -17,7 +17,7 @@ swoole
 支持 MySQL 协程连接池， 源码位于 system/MySQLPool，支持失败自动重连
 
 # 应用场景
-大型RPG游戏用到 <br>
+大型RPG游戏 <br>
 ![Image](https://github.com/caohao-php/ycsocket/blob/master/image/1.jpeg)
 
 
