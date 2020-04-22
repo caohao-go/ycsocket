@@ -47,10 +47,14 @@ class Loader
         return $this->daos[$dao_name];
     }
 
-    public function & library($library_name)
+    public function & library($library_name, $params = null)
     {
         if (!isset($this->libraries[$library_name])) {
-            $this->libraries[$library_name] = new $library_name($this);
+            if($params === null) {
+                $this->libraries[$library_name] = new $library_name();
+            } else {
+                $this->libraries[$library_name] = new $library_name($params);
+            }
         }
 
         return $this->libraries[$library_name];
