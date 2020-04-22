@@ -262,10 +262,45 @@ class GameDao extends SuperDao
 ```
 
 # library库
-第三方类库都存在于 application/library 目录下 ，通过$this->utillib = $this->loader->dao("Utillib"); 实例化。<br>
+第三方类库都存在于 application/library 目录下 ，通过$this->utillib = $this->loader->library("Utillib"); 实例化。<br>
 
 # 日志
+日志可以通过 loader 实例化，实例化的日志会打印有请求参数和客户端IP等信息，也可以用得静态函数，不过静态函数无法获取则请求参数或者客户端IP等信息。<br>
 
+日志分如下5个级别：<br>
+const DEBUG = 'DEBUG';   /* 级别为 1 ,  调试日志,   当 DEBUG = 1 的时候才会打印调试 */
+const INFO = 'INFO';    /* 级别为 2 ,  应用信息记录,  与业务相关, 这里可以添加统计信息 */
+const NOTICE = 'NOTICE';  /* 级别为 3 ,  提示日志,  用户不当操作，或者恶意刷频等行为，比INFO级别高，但是不需要报告*/
+const WARN = 'WARN';    /* 级别为 4 ,  警告,   应该在这个时候进行一些修复性的工作，系统可以继续运行下去 */
+const ERROR = 'ERROR';   /* 级别为 5 ,  错误,     可以进行一些修复性的工作，但无法确定系统会正常的工作下去，系统在以后的某个阶段， 很可能因为当前的这个问题，导致一个无法修复的错误(例如宕机),但也可能一直工作到停止有不出现严重问题 */
+
+```
+class GameService extends SuperService
+{
+    public function init()
+    {
+        parent::init();
+        $this->util_log = $this->loader->logger('game_log');
+    }
+    
+    public funciton test() 
+    {
+    	$this->util_log->LogInfo("info test");
+	$this->util_log->LogNotice("notice test");
+	$this->util_log->LogWarn("warning test");
+	$this->util_log->LogError("error test");
+    }
+    
+    public funciton static_test() 
+    {
+    	Logger::info("static info test");
+	Logger::notice("static notice test");
+	Logger::warn("static warning test");
+	Logger::error("static error test");
+	
+    }
+}
+```
 
 
 ## 附录 - CoreModel 中的辅助极速开发函数（不关心可以跳过）
