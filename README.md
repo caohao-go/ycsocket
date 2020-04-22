@@ -4,7 +4,7 @@
 在ycsocket 中，采用的是全协程化，全池化的数据库、缓存IO，支持重连，对于IO密集型的应用，能够支撑较高并发。
 
 环境：
-PHP7+
+PHP7.1+
 swoole_orm   //一个C语言扩展的ORM，本框架协程数据库需要该扩展支持，https://github.com/swoole/ext-orm
 swoole
 
