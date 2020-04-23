@@ -1,7 +1,7 @@
 # ycsocket 概述
 基于 swoole 和 swoole_orm 的极度轻量级 websocket 框架，各位可以自己扩展到 TCP/UDP，HTTP。
 
-在ycsocket 中，采用的是全协程化，全池化的数据库、缓存IO，支持重连，对于IO密集型的应用，能够支撑较高并发。 <br>
+在ycsocket 中，采用的是全协程化，全池化的数据库、缓存IO，支持重连，对于IO密集型的应用，能够支撑较高并发。 <br><br>
 支持 Redis 协程线程池，源码位于 system/RedisPool，支持失败自动重连<br>
 支持 MySQL 协程连接池， 源码位于 system/MySQLPool，支持失败自动重连<br>
 
