@@ -1,18 +1,17 @@
-# ycsocket
+# ycsocket 概述
 基于 swoole 和 swoole_orm 的极度轻量级 websocket 框架，各位可以自己扩展到 TCP/UDP，HTTP。
 
-在ycsocket 中，采用的是全协程化，全池化的数据库、缓存IO，支持重连，对于IO密集型的应用，能够支撑较高并发。
+在ycsocket 中，采用的是全协程化，全池化的数据库、缓存IO，支持重连，对于IO密集型的应用，能够支撑较高并发。 <br>
+支持 Redis 协程线程池，源码位于 system/RedisPool，支持失败自动重连<br>
+支持 MySQL 协程连接池， 源码位于 system/MySQLPool，支持失败自动重连<br>
 
-环境：
+客户端chat.html是一个聊天窗口，用于发送测试 demo
+
+# 环境
 PHP7.1+ <br>
 swoole 4.0 以上 <br>
 swoole_orm   //一个C语言扩展的ORM，本框架协程数据库需要该扩展支持，https://github.com/swoole/ext-orm  <br>
 
-支持 Redis 协程线程池，源码位于 system/RedisPool，支持失败自动重连
-
-支持 MySQL 协程连接池， 源码位于 system/MySQLPool，支持失败自动重连 
-
-客户端chat.html是一个聊天窗口，用于发送测试 demo
 
 # 应用场景
 大型RPG游戏，纯php解决方案，php + swoole + ext-orm + zephir ，这个游戏的战斗部分完全用 zephir 来实现，转化为 php 扩展，能做到同时兼顾性能和开发效率，（zephir 代码有机会我再开源出来，目前时机不成熟，游戏还比较火热），微信小游戏搜索："剑的传说" <br><br>
