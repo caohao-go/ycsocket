@@ -14,7 +14,7 @@ swoole_orm   //一个C语言扩展的ORM，本框架协程数据库需要该扩�
 
 
 # 应用场景
-大型RPG游戏，纯php解决方案，php + swoole + ext-orm + zephir ，这个游戏的战斗部分完全用 zephir 来实现，转化为 php 扩展，能做到同时兼顾性能和开发效率，（zephir 代码有机会我再开源出来，目前时机不成熟，游戏还比较火热），微信小游戏搜索："剑的传说" <br><br>
+大型RPG游戏，纯php解决方案，php + swoole + swoole_orm + zephir ，这个游戏的战斗部分完全用 zephir 来实现，转化为 php 扩展，能做到同时兼顾性能和开发效率，（zephir 代码有机会我再开源出来，目前时机不成熟，游戏还比较火热），微信小游戏搜索："剑的传说" <br><br>
 ![Image](https://github.com/caohao-php/ycsocket/blob/master/image/1.jpeg)
 
 
