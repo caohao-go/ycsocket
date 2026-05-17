@@ -1,0 +1,100 @@
+global:                                            #全局配置
+  namespace: Development                           #环境类型，分正式production和非正式development两种类型
+  env_name: formal                                 #环境名称
+
+server:                                            #服务端配置
+  app: shinelight                                  #业务的应用名
+  server: gameserver                               #进程服务名
+  filter:
+    - logger                                       #日志组件
+  service:                                         #业务服务提供的service，可以有多个
+    - name: trpc.shinelight.gameserver.WsHandler
+      network: tcp
+      protocol: ws_tnet
+      ip: 0.0.0.0
+      port: 9277
+      timeout: 60000
+
+    # 开服初始化定时任务（首次启动运行一次，通过 Redis SETNX 锁防止重复执行）
+    # startAtOnce=1: 服务启动时立即执行一次
+    # scheduler=openzone: 使用 Redis 分布式调度器，多节点只执行一次
+#    - name: trpc.shinelight.gameserver.OpenZoneTimer
+#      network: "0 0 * * * ?startAtOnce=1&scheduler=openzone"
+#      protocol: timer
+#      timeout: 300000
+
+client:                                            #客户端调用的后端配置
+  namespace: Development
+  service:
+    # MySQL 数据库 - 用户信息库（账号/序列/订单/区服信息）
+    - name: trpc.mysql.user
+      namespace: Production
+      network: tcp
+      target: dsn://root:password@tcp(127.0.0.1:3306)/shine_user?timeout=1s&parseTime=true&charset=utf8&loc=Local
+      timeout: 3000
+
+    # MySQL 数据库 - 静态配置库（物品/英雄/技能/副本等配置表）
+    - name: trpc.mysql.info
+      namespace: Production
+      network: tcp
+      target: dsn://root:password@tcp(127.0.0.1:3306)/shine_info?timeout=1s&parseTime=true&charset=utf8&loc=Local
+      timeout: 3000
+
+    # MySQL 数据库 - 区服动态数据库（玩家运行时数据表）
+    - name: trpc.mysql.world
+      namespace: Production
+      network: tcp
+      target: dsn://root:password@tcp(127.0.0.1:3306)/shine_world_1?timeout=1s&parseTime=true&charset=utf8&loc=Local
+      timeout: 3000
+
+    # Redis 实例
+    - name: trpc.redis.pika                        #对应代码中 pool.Redis("pika")
+      namespace: Production
+      target: ip://127.0.0.1:6379
+      timeout: 3000000
+
+plugins:                                           #插件配置
+  log:                                             #日志配置
+    default:                                       #默认日志的配置，可支持多输出
+      - writer: file                               #本地文件日志
+        level: debug                               #本地文件滚动日志的级别
+        writer_config:
+          filename: ./trpc.log                     #本地文件滚动日志存放的路径
+          max_size: 10                             #本地文件滚动日志的大小 单位 MB
+          max_backups: 10                          #最大日志文件数
+          max_age: 7                               #最大日志保留天数
+          compress: false                          #日志文件是否压缩
+
+  redis:
+    csd_helper:
+      enable_log: true
+      debug_flag: false
+      during_warn: 200
+      configs:
+        - name: trpc.redis.default
+          debug_flag: true
+          during_warn: 80
+        - name: trpc.redis.nickinfo
+          debug_flag: false
+          during_warn: 200
+        - name: trpc.redis.userinfo
+          debug_flag: false
+          during_warn: 200
+        - name: trpc.redis.pika
+          debug_flag: false
+          during_warn: 200
+
+  orm:
+    default:
+      - name: trpc.mysql.user
+        debug_flag: false
+        ignore_error: false
+        during_warn: 300
+      - name: trpc.mysql.info
+        debug_flag: false
+        ignore_error: false
+        during_warn: 300
+      - name: trpc.mysql.world
+        debug_flag: false
+        ignore_error: false
+        during_warn: 300

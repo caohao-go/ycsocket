@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+/* protoc --go_out=./  --go_opt=Mwebheader.proto=./ webheader.proto */
+
+/* WebReqHeader WEB 请求头 */
+message WebReqHeader {
+  string version = 1;          // 客户端版本
+  uint64 request_id = 2;       // 请求唯一id
+  uint64 timestamp = 3;        // 请求时间戳（精确到毫秒）
+  string ip = 4;               // ip地址
+  uint64 tenant = 5;           // 租户id
+  UserIdentity user_identity = 6;    // 用户身份
+}
+
+/* WebRespHeader Web响应头 */
+message WebRespHeader {
+  string version = 1;          // 客户端版本
+  uint64 request_id = 2;       // 请求唯一id
+}
+
+message UserIdentity {
+  uint64 userid = 1;
+  string account = 2;
+  string nickname = 3;
+}

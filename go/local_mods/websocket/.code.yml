@@ -1,0 +1,24 @@
+code_review:
+  restrict_labels:
+    [
+      "CR-编程规范",
+      "CR-业务逻辑",
+      "CR-边界逻辑",
+      "CR-代码架构",
+      "CR-性能影响",
+      "CR-安全性",
+      "CR-可测试性",
+      "CR-可读性",
+    ]
+
+file:
+  - path: "/.*"
+    owners: ["terryjzhang", "leoxhyang", "wineguo"]
+    owner_rule: 0
+    code_review:
+      reviewers: ["terryjzhang", "leoxhyang", "wineguo"]
+  - path: "/extensions/websocket/.*"
+    owners: ["terryjzhang", "leoxhyang", "wineguo"]
+    owner_rule: 0
+    code_review:
+      reviewers: ["terryjzhang", "leoxhyang", "wineguo"]

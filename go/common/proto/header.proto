@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+/* protoc --go_out=./  --go_opt=Mheader.proto=./ header.proto */
+
+/* RequestHeader 请求头 */
+message RequestHeader {
+  uint64 tenant = 1;          // 租户id
+  uint32 version = 2;          // 客户端版本
+  uint32 request_type = 3;     // 请求类型 0-rpc 请求 1-http 请求 2-web 请求
+  uint64 request_id = 4;       // 请求唯一id
+  string trace_id = 5;         // trace_id
+  uint64 timestamp = 6;        // 请求时间戳（精确到毫秒）
+  uint32 timeout = 7;          // 请求超时时间，单位ms
+  string caller = 8;           // 主调服务的名称 tenant.app.server.service
+  string callee = 9;           // 被调服务的路由名称 app.server.service/func
+  uint64 appid = 10;           // appid
+  uint32 compress = 11;        // 是否压缩 1-压缩；0-不压缩(默认)
+  string ip = 12;              // ip地址
+  uint32 auth_rand = 13;       // 随机生成 0-99999999 的数字，相同 timestamp 不允许出现同样的 ip、auth_rand。为了避免碰撞，0-99999999，单机理论最大支持 1000 亿/秒的并发。
+  string sign = 14;            // sign 签名，为 md5(appid+secret+version+request_type+query_mode+request_id+trace_id+timestamp+timeout+caller+compress+auth_rand)
+  string bak = 15;             // 备用
+}
+
+/* ResponseHeader 响应头 */
+message ResponseHeader {
+  uint32 version = 1;                // 客户端版本
+  uint64 request_id = 2;             // 请求唯一id
+  uint32 compress = 3;               // 返回结果是否压缩 1-压缩；0-不压缩(默认)
+  Error err = 4;                     // 返回错误
+  bool is_nil = 5;                   // 返回是否为空
+}
+
+message Error {
+  int32  type = 1; //错误类型
+  int32  code = 2; //错误码
+  string msg = 3;  //错误信息
+  string sql = 4;  //查询语句
+}
